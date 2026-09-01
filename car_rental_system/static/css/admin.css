@@ -1,0 +1,138 @@
+/* ============================================
+   DriveEase - Admin Panel Styles
+   ============================================ */
+
+:root {
+    --sidebar-width: 240px;
+    --sidebar-bg: #1a1a2e;
+    --sidebar-accent: #e94560;
+    --topbar-height: 60px;
+}
+
+/* --- Layout --- */
+.admin-body { background: #f1f5f9; margin: 0; }
+.admin-wrapper { display: flex; min-height: 100vh; }
+
+/* ============================================
+   SIDEBAR
+   ============================================ */
+.admin-sidebar {
+    width: var(--sidebar-width);
+    background: var(--sidebar-bg);
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    transition: transform 0.3s;
+    overflow-y: auto;
+}
+
+.sidebar-brand {
+    padding: 1.4rem 1.2rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #fff;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    flex-direction: column;
+}
+.sidebar-brand i { color: var(--sidebar-accent); margin-right: 0.5rem; }
+
+.sidebar-nav {
+    padding: 1rem 0.75rem;
+    flex: 1;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: 8px;
+    color: rgba(255,255,255,0.65);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    margin-bottom: 0.15rem;
+}
+.sidebar-link i { font-size: 1.05rem; width: 20px; }
+.sidebar-link:hover {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+}
+.sidebar-link.active {
+    background: var(--sidebar-accent);
+    color: #fff;
+}
+.sidebar-divider { border-color: rgba(255,255,255,0.1); margin: 0.75rem 0; }
+
+/* ============================================
+   MAIN AREA
+   ============================================ */
+.admin-main {
+    margin-left: var(--sidebar-width);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.admin-topbar {
+    height: var(--topbar-height);
+    background: #fff;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.05);
+}
+
+.admin-content {
+    padding: 1.75rem;
+    flex: 1;
+}
+
+/* ============================================
+   ADMIN STAT CARDS
+   ============================================ */
+.admin-stat-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-align: center;
+    border-top: 3px solid;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    transition: transform 0.2s;
+}
+.admin-stat-card:hover { transform: translateY(-3px); }
+.admin-stat-card .stat-icon { font-size: 1.6rem; display: block; margin-bottom: 0.5rem; }
+.admin-stat-card .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1;
+}
+.admin-stat-card .stat-label { color: #6b7280; font-size: 0.78rem; margin-top: 0.25rem; }
+
+/* ============================================
+   RESPONSIVE SIDEBAR
+   ============================================ */
+@media (max-width: 991px) {
+    .admin-sidebar {
+        transform: translateX(-100%);
+    }
+    .admin-sidebar.show {
+        transform: translateX(0);
+    }
+    .admin-main {
+        margin-left: 0;
+    }
+}

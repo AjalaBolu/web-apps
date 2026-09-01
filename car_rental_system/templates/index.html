@@ -1,0 +1,207 @@
+{% extends 'layout.html' %}
+{% block title %}DriveEase - Premium Car Rentals{% endblock %}
+
+{% block content %}
+
+<!-- ==============================
+     HERO SECTION
+     ============================== -->
+<section class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+        <div class="row align-items-center min-vh-75">
+            <div class="col-lg-7">
+                <span class="hero-badge">⭐ Trusted by 10,000+ customers</span>
+                <h1 class="hero-title">
+                    Find Your Perfect<br>
+                    <span class="text-accent">Rental Car</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Explore our wide fleet of quality vehicles. Affordable rates, flexible plans, and seamless booking.
+                </p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="{{ url_for('cars') }}" class="btn btn-accent btn-lg">
+                        <i class="bi bi-search me-2"></i>Browse Cars
+                    </a>
+                    {% if not session.get('user_id') %}
+                    <a href="{{ url_for('register') }}" class="btn btn-outline-light btn-lg">
+                        Get Started
+                    </a>
+                    {% endif %}
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="hero-stats mt-5">
+                    <div class="stat-item">
+                        <span class="stat-number">{{ cars|length }}+</span>
+                        <span class="stat-label">Available Cars</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">24/7</span>
+                        <span class="stat-label">Support</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">100%</span>
+                        <span class="stat-label">Insured</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==============================
+     FEATURES SECTION
+     ============================== -->
+<section class="py-5 features-section">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-3 col-sm-6">
+                <div class="feature-card text-center">
+                    <div class="feature-icon"><i class="bi bi-shield-check"></i></div>
+                    <h6 class="fw-bold mt-3">Fully Insured</h6>
+                    <p class="small text-muted">All vehicles are fully insured for your peace of mind.</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="feature-card text-center">
+                    <div class="feature-icon"><i class="bi bi-clock-history"></i></div>
+                    <h6 class="fw-bold mt-3">Flexible Pickup</h6>
+                    <p class="small text-muted">Pick up and drop off at your preferred location.</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="feature-card text-center">
+                    <div class="feature-icon"><i class="bi bi-cash-coin"></i></div>
+                    <h6 class="fw-bold mt-3">Best Rates</h6>
+                    <p class="small text-muted">Competitive daily rates with no hidden charges.</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="feature-card text-center">
+                    <div class="feature-icon"><i class="bi bi-headset"></i></div>
+                    <h6 class="fw-bold mt-3">24/7 Support</h6>
+                    <p class="small text-muted">Our team is available anytime you need help.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==============================
+     AVAILABLE CARS SECTION
+     ============================== -->
+<section class="py-5">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="section-title">Available Cars</h2>
+            <p class="text-muted">Choose from our wide selection of vehicles</p>
+        </div>
+
+        <div class="row g-4">
+            {% for car in cars[:6] %}   {# Show max 6 cars on homepage #}
+            <div class="col-lg-4 col-md-6">
+                <div class="car-card">
+                    <!-- Car Image -->
+                    <div class="car-image-wrap">
+                        {% if car.image_url %}
+                            <img src="{{ car.image_url }}" alt="{{ car.name }}" class="car-img">
+                        {% else %}
+                            <!-- Placeholder image with category icon -->
+                            <div class="car-img-placeholder">
+                                <i class="bi bi-car-front"></i>
+                                <span>{{ car.category }}</span>
+                            </div>
+                        {% endif %}
+                        <span class="car-category-badge">{{ car.category }}</span>
+                    </div>
+
+                    <!-- Car Details -->
+                    <div class="car-card-body">
+                        <h5 class="car-name">{{ car.name }}</h5>
+                        <p class="car-desc text-muted small">{{ car.description[:80] }}...</p>
+
+                        <!-- Car Specs -->
+                        <div class="car-specs">
+                            <span><i class="bi bi-calendar3 me-1"></i>{{ car.year }}</span>
+                            <span><i class="bi bi-people me-1"></i>{{ car.seats }} Seats</span>
+                            <span><i class="bi bi-palette me-1"></i>{{ car.color }}</span>
+                        </div>
+
+                        <!-- Price and Book Button -->
+                        <div class="car-footer">
+                            <div class="car-price">
+                                <span class="price-amount">${{ "%.2f"|format(car.price_per_day) }}</span>
+                                <span class="price-label">/day</span>
+                            </div>
+                            {% if session.get('user_id') %}
+                                <a href="{{ url_for('book_car', car_id=car.id) }}" class="btn btn-book">
+                                    Book Now
+                                </a>
+                            {% else %}
+                                <a href="{{ url_for('login') }}" class="btn btn-book">
+                                    Book Now
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <!-- Show message if no cars available -->
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-car-front display-1 text-muted"></i>
+                <p class="text-muted mt-3">No cars available at the moment.</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if cars|length > 6 %}
+        <div class="text-center mt-5">
+            <a href="{{ url_for('cars') }}" class="btn btn-outline-primary btn-lg">
+                View All Cars <i class="bi bi-arrow-right ms-2"></i>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- ==============================
+     HOW IT WORKS SECTION
+     ============================== -->
+<section class="py-5 how-it-works">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="section-title">How It Works</h2>
+            <p class="text-muted">Rent a car in 3 easy steps</p>
+        </div>
+        <div class="row g-4 text-center">
+            <div class="col-md-4">
+                <div class="step-card">
+                    <div class="step-number">01</div>
+                    <i class="bi bi-person-plus step-icon"></i>
+                    <h5 class="fw-bold mt-3">Register & Login</h5>
+                    <p class="text-muted">Create a free account in minutes.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="step-card">
+                    <div class="step-number">02</div>
+                    <i class="bi bi-car-front step-icon"></i>
+                    <h5 class="fw-bold mt-3">Choose a Car</h5>
+                    <p class="text-muted">Browse our fleet and pick your vehicle.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="step-card">
+                    <div class="step-number">03</div>
+                    <i class="bi bi-calendar-check step-icon"></i>
+                    <h5 class="fw-bold mt-3">Book & Drive</h5>
+                    <p class="text-muted">Confirm your dates and hit the road!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

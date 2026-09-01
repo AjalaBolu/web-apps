@@ -1,0 +1,163 @@
+{% extends 'layout.html' %}
+{% block title %}Book {{ car.name }} - DriveEase{% endblock %}
+
+{% block content %}
+<div class="booking-page py-5">
+    <div class="container">
+        <div class="row g-4">
+
+            <!-- Left: Car Summary Card -->
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm sticky-top" style="top: 100px;">
+                    <div class="car-image-wrap rounded-top overflow-hidden">
+                        {% if car.image_url %}
+                            <img src="{{ car.image_url }}" alt="{{ car.name }}" class="w-100" style="height:220px; object-fit:cover;">
+                        {% else %}
+                            <div class="car-img-placeholder rounded-top" style="height:220px;">
+                                <i class="bi bi-car-front" style="font-size:4rem;"></i>
+                                <span>{{ car.category }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <span class="badge bg-success mb-2">Available</span>
+                        <h4 class="fw-bold">{{ car.name }}</h4>
+                        <p class="text-muted small">{{ car.description }}</p>
+                        <hr>
+                        <div class="row text-center g-2">
+                            <div class="col-4">
+                                <div class="spec-box">
+                                    <i class="bi bi-calendar3 text-accent"></i>
+                                    <p class="mb-0 small fw-semibold">{{ car.year }}</p>
+                                    <p class="mb-0 x-small text-muted">Year</p>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="spec-box">
+                                    <i class="bi bi-people text-accent"></i>
+                                    <p class="mb-0 small fw-semibold">{{ car.seats }}</p>
+                                    <p class="mb-0 x-small text-muted">Seats</p>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="spec-box">
+                                    <i class="bi bi-palette text-accent"></i>
+                                    <p class="mb-0 small fw-semibold">{{ car.color }}</p>
+                                    <p class="mb-0 x-small text-muted">Color</p>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted">Daily Rate</span>
+                            <span class="fs-4 fw-bold text-accent">${{ "%.2f"|format(car.price_per_day) }}/day</span>
+                        </div>
+                        <!-- Live total price display -->
+                        <div class="d-flex justify-content-between align-items-center mt-2" id="total-display" style="display:none!important;">
+                            <span class="text-muted">Estimated Total</span>
+                            <span class="fs-5 fw-bold text-success" id="total-price-display">—</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Booking Form -->
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0 fw-bold"><i class="bi bi-calendar-plus me-2"></i>Complete Your Booking</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <form method="POST" action="{{ url_for('book_car', car_id=car.id) }}">
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Pickup Date</label>
+                                <input type="date" name="pickup_date" id="pickup_date"
+                                       class="form-control" min="{{ today }}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Return Date</label>
+                                <input type="date" name="return_date" id="return_date"
+                                       class="form-control" min="{{ today }}" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">Pickup Location</label>
+                                <input type="text" name="pickup_location" class="form-control"
+                                       placeholder="e.g. Airport Terminal 1, Downtown Office" required>
+                            </div>
+
+                            <!-- Price Summary Box -->
+                            <div class="price-summary-box mb-4" id="price-box" style="display:none;">
+                                <h6 class="fw-bold mb-2">Price Summary</h6>
+                                <div class="d-flex justify-content-between">
+                                    <span id="days-label">Days</span>
+                                    <span id="days-calc">—</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>Rate per day</span>
+                                    <span>${{ "%.2f"|format(car.price_per_day) }}</span>
+                                </div>
+                                <hr class="my-2">
+                                <div class="d-flex justify-content-between fw-bold">
+                                    <span>Total</span>
+                                    <span class="text-success" id="total-calc">—</span>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-accent w-100 btn-lg">
+                                <i class="bi bi-check-circle me-2"></i>Confirm Booking
+                            </button>
+                            <a href="{{ url_for('cars') }}" class="btn btn-outline-secondary w-100 mt-2">
+                                ← Back to Cars
+                            </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Dynamically calculate total price as user picks dates
+const pricePerDay = {{ car.price_per_day }};
+
+function calcTotal() {
+    const pickup = document.getElementById('pickup_date').value;
+    const ret = document.getElementById('return_date').value;
+    if (!pickup || !ret) return;
+
+    const d1 = new Date(pickup);
+    const d2 = new Date(ret);
+    const days = Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
+
+    if (days <= 0) {
+        document.getElementById('price-box').style.display = 'none';
+        return;
+    }
+
+    const total = (days * pricePerDay).toFixed(2);
+    document.getElementById('days-label').textContent = `${days} day(s)`;
+    document.getElementById('days-calc').textContent = `${days} × $${pricePerDay.toFixed(2)}`;
+    document.getElementById('total-calc').textContent = `$${total}`;
+    document.getElementById('price-box').style.display = 'block';
+
+    // Also update sidebar
+    document.getElementById('total-price-display').textContent = `$${total}`;
+    document.getElementById('total-display').style.display = 'flex';
+}
+
+document.getElementById('pickup_date').addEventListener('change', function() {
+    // Set minimum return date to day after pickup
+    const minReturn = new Date(this.value);
+    minReturn.setDate(minReturn.getDate() + 1);
+    document.getElementById('return_date').min = minReturn.toISOString().split('T')[0];
+    calcTotal();
+});
+document.getElementById('return_date').addEventListener('change', calcTotal);
+</script>
+{% endblock %}

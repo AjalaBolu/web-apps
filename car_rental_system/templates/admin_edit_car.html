@@ -1,0 +1,79 @@
+{% extends 'admin_layout.html' %}
+{% block title %}Edit Car - DriveEase Admin{% endblock %}
+
+{% block admin_content %}
+<div class="mb-4">
+    <a href="{{ url_for('admin_cars') }}" class="btn btn-sm btn-outline-secondary mb-3">
+        ← Back to Cars
+    </a>
+    <h4 class="fw-bold mb-0">Edit Car</h4>
+    <p class="text-muted small">Update details for: <strong>{{ car.name }}</strong></p>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-4">
+        <form method="POST" action="{{ url_for('admin_edit_car', car_id=car.id) }}">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Full Name</label>
+                    <input type="text" name="name" class="form-control" value="{{ car.name }}" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Brand</label>
+                    <input type="text" name="brand" class="form-control" value="{{ car.brand }}" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Model</label>
+                    <input type="text" name="model" class="form-control" value="{{ car.model }}" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Year</label>
+                    <input type="number" name="year" class="form-control" value="{{ car.year }}" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Color</label>
+                    <input type="text" name="color" class="form-control" value="{{ car.color }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Plate Number</label>
+                    <input type="text" name="plate_number" class="form-control" value="{{ car.plate_number }}" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Category</label>
+                    <select name="category" class="form-select">
+                        {% for cat in ['Sedan','SUV','Luxury','Pickup','Hatchback','Van'] %}
+                        <option value="{{ cat }}" {% if car.category == cat %}selected{% endif %}>{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Seats</label>
+                    <input type="number" name="seats" class="form-control" value="{{ car.seats }}" min="2" max="15">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Price Per Day ($)</label>
+                    <input type="number" name="price_per_day" class="form-control" step="0.01" value="{{ car.price_per_day }}" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="available" {% if car.status=='available' %}selected{% endif %}>Available</option>
+                        <option value="rented" {% if car.status=='rented' %}selected{% endif %}>Rented</option>
+                        <option value="maintenance" {% if car.status=='maintenance' %}selected{% endif %}>Maintenance</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-semibold">Description</label>
+                    <textarea name="description" class="form-control" rows="3">{{ car.description }}</textarea>
+                </div>
+                <div class="col-12 d-flex gap-2">
+                    <button type="submit" class="btn btn-accent">
+                        <i class="bi bi-save me-2"></i>Save Changes
+                    </button>
+                    <a href="{{ url_for('admin_cars') }}" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

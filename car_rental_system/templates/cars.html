@@ -1,0 +1,67 @@
+{% extends 'layout.html' %}
+{% block title %}Browse Cars - DriveEase{% endblock %}
+
+{% block content %}
+<div class="py-5">
+    <div class="container">
+        <div class="section-header mb-4">
+            <h2 class="fw-bold">Available Cars</h2>
+            <p class="text-muted">Find the perfect car for your trip</p>
+        </div>
+
+        <!-- Category Filter -->
+        <div class="filter-bar mb-4">
+            <a href="{{ url_for('cars') }}" class="filter-btn {% if not selected_category %}active{% endif %}">All</a>
+            {% for cat in ['Sedan', 'SUV', 'Luxury', 'Pickup', 'Hatchback', 'Van'] %}
+            <a href="{{ url_for('cars', category=cat) }}" class="filter-btn {% if selected_category == cat %}active{% endif %}">{{ cat }}</a>
+            {% endfor %}
+        </div>
+
+        <div class="row g-4">
+            {% for car in cars %}
+            <div class="col-lg-4 col-md-6">
+                <div class="car-card">
+                    <div class="car-image-wrap">
+                        {% if car.image_url %}
+                            <img src="{{ car.image_url }}" alt="{{ car.name }}" class="car-img">
+                        {% else %}
+                            <div class="car-img-placeholder">
+                                <i class="bi bi-car-front"></i>
+                                <span>{{ car.category }}</span>
+                            </div>
+                        {% endif %}
+                        <span class="car-category-badge">{{ car.category }}</span>
+                    </div>
+                    <div class="car-card-body">
+                        <h5 class="car-name">{{ car.name }}</h5>
+                        <p class="car-desc text-muted small">{{ (car.description or '')[:80] }}{% if car.description and car.description|length > 80 %}...{% endif %}</p>
+                        <div class="car-specs">
+                            <span><i class="bi bi-calendar3 me-1"></i>{{ car.year }}</span>
+                            <span><i class="bi bi-people me-1"></i>{{ car.seats }} Seats</span>
+                            <span><i class="bi bi-palette me-1"></i>{{ car.color }}</span>
+                        </div>
+                        <div class="car-footer">
+                            <div class="car-price">
+                                <span class="price-amount">${{ "%.2f"|format(car.price_per_day) }}</span>
+                                <span class="price-label">/day</span>
+                            </div>
+                            {% if session.get('user_id') %}
+                                <a href="{{ url_for('book_car', car_id=car.id) }}" class="btn btn-book">Book Now</a>
+                            {% else %}
+                                <a href="{{ url_for('login') }}" class="btn btn-book">Login to Book</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-search display-3 text-muted"></i>
+                <h5 class="mt-3 text-muted">No cars found in this category</h5>
+                <a href="{{ url_for('cars') }}" class="btn btn-accent mt-3">View All Cars</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

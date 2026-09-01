@@ -1,0 +1,354 @@
+/* ============================================
+   DriveEase Car Rental - Main Stylesheet
+   ============================================ */
+
+/* --- Google Fonts & CSS Variables --- */
+:root {
+    --primary: #1a1a2e;
+    --accent: #e94560;
+    --accent-dark: #c73652;
+    --light-bg: #f8f9fb;
+    --card-bg: #ffffff;
+    --text-muted: #6b7280;
+    --border: #e5e7eb;
+    --shadow: 0 4px 20px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
+    --radius: 12px;
+    --radius-lg: 18px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    font-family: 'DM Sans', sans-serif;
+    background-color: var(--light-bg);
+    color: #1f2937;
+}
+
+h1, h2, h3, h4, h5, .navbar-brand, .hero-title {
+    font-family: 'Syne', sans-serif;
+}
+
+/* --- Accent Button --- */
+.btn-accent {
+    background-color: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background 0.2s, transform 0.15s;
+    padding: 0.5rem 1.25rem;
+}
+.btn-accent:hover {
+    background-color: var(--accent-dark);
+    color: #fff;
+    transform: translateY(-1px);
+}
+.text-accent { color: var(--accent) !important; }
+
+/* ============================================
+   NAVBAR
+   ============================================ */
+#mainNav {
+    background: var(--primary);
+    box-shadow: 0 2px 20px rgba(0,0,0,0.2);
+    padding: 0.75rem 0;
+}
+.navbar-brand {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #fff !important;
+    letter-spacing: -0.5px;
+}
+.navbar-brand i { color: var(--accent); }
+.nav-link { color: rgba(255,255,255,0.8) !important; font-weight: 500; }
+.nav-link:hover { color: #fff !important; }
+
+/* ============================================
+   HERO SECTION
+   ============================================ */
+.hero-section {
+    background: linear-gradient(135deg, var(--primary) 0%, #16213e 50%, #0f3460 100%);
+    position: relative;
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+.hero-section::after {
+    content: '';
+    position: absolute;
+    right: -100px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(233,69,96,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+}
+.hero-content { position: relative; z-index: 2; padding: 4rem 0; }
+.hero-badge {
+    display: inline-block;
+    background: rgba(233,69,96,0.15);
+    color: var(--accent);
+    border: 1px solid rgba(233,69,96,0.3);
+    padding: 0.3rem 1rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+.hero-title {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.15;
+    margin-bottom: 1.2rem;
+}
+.hero-subtitle {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.7);
+    max-width: 480px;
+    margin-bottom: 2rem;
+}
+.hero-stats {
+    display: flex;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+}
+.stat-item { display: flex; flex-direction: column; }
+.stat-number { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; color: #fff; line-height: 1; }
+.stat-label { font-size: 0.75rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 1px; }
+.min-vh-75 { min-height: 75vh; }
+
+/* ============================================
+   FEATURES SECTION
+   ============================================ */
+.features-section { background: #fff; }
+.feature-card {
+    padding: 2rem 1.5rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    transition: all 0.25s;
+}
+.feature-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+}
+.feature-icon {
+    width: 60px; height: 60px;
+    background: rgba(233,69,96,0.1);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto;
+    font-size: 1.5rem;
+    color: var(--accent);
+}
+
+/* ============================================
+   CAR CARDS
+   ============================================ */
+.car-card {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform 0.25s, box-shadow 0.25s;
+    height: 100%;
+}
+.car-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+}
+.car-image-wrap { position: relative; overflow: hidden; height: 200px; }
+.car-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+.car-card:hover .car-img { transform: scale(1.05); }
+.car-img-placeholder {
+    background: linear-gradient(135deg, #e0e0e0, #c8c8c8);
+    height: 100%; width: 100%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    color: #999; font-size: 3.5rem;
+}
+.car-img-placeholder span { font-size: 0.8rem; margin-top: 0.5rem; text-transform: uppercase; letter-spacing: 1px; }
+.car-category-badge {
+    position: absolute; top: 12px; left: 12px;
+    background: var(--primary); color: #fff;
+    padding: 0.2rem 0.65rem; border-radius: 20px;
+    font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.car-card-body { padding: 1.25rem; }
+.car-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; margin-bottom: 0.4rem; }
+.car-desc { font-size: 0.85rem; line-height: 1.5; margin-bottom: 0.8rem; }
+.car-specs {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    font-size: 0.8rem; color: var(--text-muted);
+    padding: 0.6rem 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    margin-bottom: 1rem;
+}
+.car-footer { display: flex; justify-content: space-between; align-items: center; }
+.car-price {}
+.price-amount { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--accent); }
+.price-label { font-size: 0.8rem; color: var(--text-muted); }
+.btn-book {
+    background: var(--primary); color: #fff;
+    border: none; border-radius: 8px;
+    padding: 0.45rem 1rem; font-size: 0.85rem; font-weight: 600;
+    transition: background 0.2s;
+}
+.btn-book:hover { background: var(--accent); color: #fff; }
+
+/* ============================================
+   HOW IT WORKS
+   ============================================ */
+.how-it-works { background: var(--primary); }
+.how-it-works .section-title { color: #fff; }
+.how-it-works p { color: rgba(255,255,255,0.6); }
+.step-card { padding: 2rem; position: relative; }
+.step-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 4rem; font-weight: 800;
+    color: rgba(255,255,255,0.07);
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    line-height: 1;
+}
+.step-icon { font-size: 2.5rem; color: var(--accent); position: relative; z-index: 1; }
+.step-card h5 { color: #fff; }
+
+/* ============================================
+   SECTION HEADERS
+   ============================================ */
+.section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem; font-weight: 800;
+    margin-bottom: 0.5rem;
+}
+
+/* ============================================
+   FILTER BAR
+   ============================================ */
+.filter-bar { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.filter-btn {
+    padding: 0.4rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: 50px;
+    background: #fff;
+    color: #374151;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+.filter-btn:hover, .filter-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+
+/* ============================================
+   AUTH PAGES
+   ============================================ */
+.auth-page {
+    background: linear-gradient(135deg, var(--primary), #0f3460);
+    min-height: 100vh;
+}
+.auth-card {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
+    box-shadow: var(--shadow-lg);
+    margin: 2rem 0;
+}
+.auth-logo-icon {
+    font-size: 3rem;
+    color: var(--accent);
+}
+.min-vh-80 { min-height: 80vh; }
+
+/* ============================================
+   DASHBOARD
+   ============================================ */
+.dashboard-welcome {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+}
+.stat-card {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 1.2rem;
+    display: flex; align-items: center; gap: 1rem;
+    box-shadow: var(--shadow);
+}
+.stat-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; flex-shrink: 0;
+}
+.bg-primary-soft { background: rgba(13,110,253,0.1); }
+.bg-success-soft { background: rgba(25,135,84,0.1); }
+.bg-warning-soft { background: rgba(255,193,7,0.1); }
+.bg-info-soft    { background: rgba(13,202,240,0.1); }
+
+/* ============================================
+   BOOKING PAGE
+   ============================================ */
+.spec-box {
+    background: var(--light-bg);
+    border-radius: 8px;
+    padding: 0.6rem;
+}
+.x-small { font-size: 0.72rem; }
+.price-summary-box {
+    background: #f0fdf4;
+    border: 1.5px solid #bbf7d0;
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+}
+
+/* ============================================
+   STATUS BADGES
+   ============================================ */
+.status-badge { font-size: 0.78rem; padding: 0.35em 0.7em; border-radius: 20px; font-weight: 600; }
+.status-available  { background: #d1fae5; color: #065f46; }
+.status-rented     { background: #fef3c7; color: #92400e; }
+.status-maintenance{ background: #fee2e2; color: #991b1b; }
+.status-pending    { background: #fef3c7; color: #92400e; }
+.status-confirmed  { background: #d1fae5; color: #065f46; }
+.status-cancelled  { background: #fee2e2; color: #991b1b; }
+.status-completed  { background: #dbeafe; color: #1e40af; }
+
+/* ============================================
+   FOOTER
+   ============================================ */
+.footer {
+    background: var(--primary);
+    color: rgba(255,255,255,0.8);
+}
+.footer h5, .footer h6 { color: #fff; }
+.footer-link { color: rgba(255,255,255,0.6); text-decoration: none; display: block; margin-bottom: 0.25rem; }
+.footer-link:hover { color: var(--accent); }
+
+/* ============================================
+   USER AVATAR (admin users table)
+   ============================================ */
+.user-avatar {
+    width: 36px; height: 36px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.9rem; flex-shrink: 0;
+}
+
+/* ============================================
+   RESPONSIVE TWEAKS
+   ============================================ */
+@media (max-width: 768px) {
+    .hero-title { font-size: 2.2rem; }
+    .hero-stats { gap: 1.5rem; }
+    .auth-card { padding: 1.5rem; margin: 1rem; }
+}
