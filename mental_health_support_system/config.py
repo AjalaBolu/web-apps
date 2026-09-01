@@ -12,11 +12,11 @@ class Config:
         'mhs-super-secret-key-2024-change-me'
     )
 
-    MYSQL_HOST = os.environ.get('MYSQLHOST', 'localhost')
-    MYSQL_PORT = os.environ.get('MYSQLPORT', '3306')
-    MYSQL_USER = os.environ.get('MYSQLUSER', 'root')
-    MYSQL_PASSWORD = os.environ.get('MYSQLPASSWORD', '')
-    MYSQL_DB = os.environ.get('MYSQLDATABASE', 'mental_health_db')
+    MYSQL_HOST = os.environ.get('MYSQL_HOST', 'localhost')
+    MYSQL_PORT = os.environ.get('MYSQL_PORT', '3306')
+    MYSQL_USER = os.environ.get('MYSQL_USER', 'root')
+    MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD', '')
+    MYSQL_DB = os.environ.get('MYSQL_DB', 'mental_health_db')
 
     SQLALCHEMY_DATABASE_URI = (
         f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}"
@@ -24,6 +24,14 @@ class Config:
     )
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "connect_args": {
+            "ssl": {
+                "ca": os.path.join(BASE_DIR, "certs", "ca.pem")
+            }
+        }
+    }
 
     PERMANENT_SESSION_LIFETIME = timedelta(hours=2)
 
