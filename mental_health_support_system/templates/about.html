@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% set show_footer = true %}
+{% set show_sidebar = false %}
+{% block title %}About — MindSpace{% endblock %}
+
+{% block content %}
+<div style="padding:5rem 0; background:var(--black-soft); border-bottom:1px solid var(--border);">
+  <div class="container text-center">
+    <p class="section-label">Our Mission</p>
+    <h1 class="display-title">About MindSpace</h1>
+    <p class="dim-text mt-3" style="max-width:600px; margin:0 auto; font-size:1.05rem;">
+      We believe mental health care should be accessible, private, and empowering for everyone.
+    </p>
+  </div>
+</div>
+
+<div class="container py-5">
+  <div class="row g-5 align-items-center mb-5">
+    <div class="col-lg-6 animate-on-scroll">
+      <p class="section-label">Who We Are</p>
+      <h2 style="font-family:var(--font-display); font-size:2.2rem;">
+        A Platform Built on <span class="gold-text">Compassion</span>
+      </h2>
+      <p class="dim-text mt-3" style="line-height:1.9;">
+        MindSpace is a web-based mental health support system designed to bridge the gap
+        between individuals seeking emotional wellness and qualified mental health professionals.
+        We provide a secure, stigma-free environment where healing can begin.
+      </p>
+    </div>
+    <div class="col-lg-6 animate-on-scroll">
+      <div class="row g-3">
+        {% for num, label in [('500+','Users Helped'),('50+','Certified Therapists'),('1000+','Sessions Completed'),('98%','Satisfaction Rate')] %}
+        <div class="col-6">
+          <div class="stat-card">
+            <div class="stat-number">{{ num }}</div>
+            <div class="stat-label">{{ label }}</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    {% for icon, title, desc in [
+      ('bi-shield-check','Privacy First','End-to-end encrypted messaging and HIPAA-conscious data handling keep your information safe.'),
+      ('bi-award','Certified Professionals','Every therapist on our platform is verified, licensed, and approved by our admin team.'),
+      ('bi-people','Community Support','Beyond 1-on-1 therapy, access resources and guided programmes for ongoing wellness.'),
+      ('bi-phone','Access Anywhere','Fully responsive design means you can access MindSpace from any device, anywhere.')
+    ] %}
+    <div class="col-md-6 animate-on-scroll">
+      <div class="card-dark d-flex gap-3">
+        <i class="bi {{ icon }} gold-text" style="font-size:1.8rem; flex-shrink:0;"></i>
+        <div>
+          <h5 style="font-family:var(--font-display);">{{ title }}</h5>
+          <p class="dim-text mb-0" style="font-size:0.88rem;">{{ desc }}</p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

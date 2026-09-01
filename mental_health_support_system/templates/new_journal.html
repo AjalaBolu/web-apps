@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}New Journal Entry — MindSpace{% endblock %}
+
+{% block content %}
+<div class="page-header fade-up">
+  <div class="d-flex justify-content-between align-items-center">
+    <div>
+      <p class="section-label mb-1">Personal Wellness</p>
+      <h1>New Journal Entry</h1>
+    </div>
+    <a href="{{ url_for('journal.list_entries') }}" class="btn btn-ghost">
+      <i class="bi bi-arrow-left me-1"></i> Back
+    </a>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card-dark fade-up fade-up-1">
+      <form method="POST" action="{{ url_for('journal.new_entry') }}">
+
+        <div class="mb-3">
+          <label class="form-label">Entry Title</label>
+          <input type="text" name="title" class="form-control"
+                 placeholder="Give this entry a title…" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">How are you feeling? (optional)</label>
+          <div class="mood-selector">
+            {% for score, (label, emoji) in [
+              (1, ('Terrible','😞')), (2, ('Sad','😢')), (3, ('Okay','😐')),
+              (4, ('Good','😊')), (5, ('Excellent','😄'))
+            ] %}
+            <label class="mood-option">
+              <input type="radio" name="mood_score" value="{{ score }}" />
+              <div class="mood-btn">
+                <span class="emoji">{{ emoji }}</span>
+                <span class="label">{{ label }}</span>
+              </div>
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label">Your Thoughts *</label>
+          <textarea name="content" class="form-control" rows="10"
+                    placeholder="Write freely… this is your private space."
+                    required></textarea>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-gold">
+            <i class="bi bi-save me-1"></i> Save Entry
+          </button>
+          <a href="{{ url_for('journal.list_entries') }}" class="btn btn-ghost">
+            Discard
+          </a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

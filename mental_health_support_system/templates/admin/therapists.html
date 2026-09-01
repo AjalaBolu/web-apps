@@ -1,0 +1,69 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Manage Therapists — Admin{% endblock %}
+{% block breadcrumb %}Admin / Therapists{% endblock %}
+
+{% block content %}
+<div class="page-header fade-up">
+  <p class="section-label mb-1">Administration</p>
+  <h1>Manage Therapists</h1>
+</div>
+
+<div class="card-dark">
+  <div class="table-responsive">
+    <table class="table-dark-custom w-100">
+      <thead>
+        <tr>
+          <th>Therapist</th>
+          <th>Specialization</th>
+          <th>License</th>
+          <th>Experience</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in therapists %}
+        <tr>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div class="avatar" style="width:32px;height:32px;font-size:0.8rem;">
+                {{ (t.user.full_name or t.user.username)[0].upper() }}
+              </div>
+              <div>
+                <div style="color:var(--white); font-size:0.88rem;">{{ t.user.full_name or t.user.username }}</div>
+                <div class="dim-text" style="font-size:0.75rem;">{{ t.user.email }}</div>
+              </div>
+            </div>
+          </td>
+          <td class="dim-text" style="font-size:0.85rem;">{{ t.specialization or '—' }}</td>
+          <td class="dim-text" style="font-size:0.82rem;">{{ t.license_number or '—' }}</td>
+          <td class="dim-text" style="font-size:0.82rem;">{{ t.years_experience }} yrs</td>
+          <td>
+            {% if t.is_approved %}
+              <span class="badge-success">Approved</span>
+            {% else %}
+              <span class="badge-pending">Pending</span>
+            {% endif %}
+          </td>
+          <td>
+            <div class="d-flex gap-2">
+              {% if not t.is_approved %}
+              <form method="POST" action="{{ url_for('admin.approve_therapist', t_id=t.id) }}" style="display:inline;">
+                <button type="submit" class="btn btn-gold btn-sm">Approve</button>
+              </form>
+              {% endif %}
+              <form method="POST" action="{{ url_for('admin.reject_therapist', t_id=t.id) }}" style="display:inline;">
+                <button type="submit" class="btn btn-ghost btn-sm" style="color:var(--danger);"
+                        data-confirm="Reject / revoke this therapist?">
+                  Reject
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

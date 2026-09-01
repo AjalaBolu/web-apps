@@ -1,0 +1,149 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Admin Dashboard — MindSpace{% endblock %}
+{% block breadcrumb %}Admin / Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header fade-up">
+  <p class="section-label mb-1">Overview</p>
+  <h1>Admin Dashboard</h1>
+</div>
+
+<!-- ── Stat Cards ─────────────────────────────────────────── -->
+<div class="row g-3 mb-4">
+  {% for icon, num, label, color in [
+    ('bi-people',         stats.users,             'Total Users',           'var(--gold)'),
+    ('bi-person-badge',   stats.therapists,         'Total Therapists',      'var(--info)'),
+    ('bi-calendar-check', stats.appointments,       'Total Appointments',    'var(--success)'),
+    ('bi-book',           stats.resources,          'Resources Published',   'var(--gold-dim)'),
+    ('bi-hourglass-split',stats.pending_appts,      'Pending Appointments',  'var(--danger)'),
+    ('bi-person-check',   stats.pending_therapists, 'Pending Approvals',     'var(--gold)')
+  ] %}
+  <div class="col-6 col-lg-2 fade-up">
+    <div class="stat-card">
+      <i class="bi {{ icon }} mb-2" style="font-size:1.5rem; color:{{ color }};"></i>
+      <div class="stat-number" style="font-size:2rem; color:{{ color }};">{{ num }}</div>
+      <div class="stat-label">{{ label }}</div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="row g-4">
+
+  <!-- ── Recent Users ──────────────────────────────────────── -->
+  <div class="col-lg-6">
+    <div class="card-dark">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 style="font-family:var(--font-display); font-size:1.3rem;">
+          <i class="bi bi-people gold-text me-2"></i>Recent Users
+        </h5>
+        <a href="{{ url_for('admin.manage_users') }}" class="dim-text" style="font-size:0.82rem;">
+          Manage all →
+        </a>
+      </div>
+      <table class="table-dark-custom w-100">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Role</th>
+            <th>Joined</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in recent_users %}
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <div class="avatar" style="width:30px; height:30px; font-size:0.75rem;">
+                  {{ (user.full_name or user.username)[0].upper() }}
+                </div>
+                <div>
+                  <div style="font-size:0.85rem; color:var(--white);">{{ user.full_name or user.username }}</div>
+                  <div class="dim-text" style="font-size:0.75rem;">{{ user.email }}</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="badge-gold">{{ user.role }}</span></td>
+            <td class="dim-text" style="font-size:0.82rem;">{{ user.created_at.strftime('%d %b %Y') }}</td>
+            <td>
+              {% if user.is_active %}
+                <span class="badge-success">Active</span>
+              {% else %}
+                <span class="badge-danger">Suspended</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── Recent Appointments ────────────────────────────────── -->
+  <div class="col-lg-6">
+    <div class="card-dark">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 style="font-family:var(--font-display); font-size:1.3rem;">
+          <i class="bi bi-calendar-check gold-text me-2"></i>Recent Appointments
+        </h5>
+        <a href="{{ url_for('admin.manage_appointments') }}" class="dim-text" style="font-size:0.82rem;">
+          Manage all →
+        </a>
+      </div>
+      <table class="table-dark-custom w-100">
+        <thead>
+          <tr>
+            <th>Patient</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for appt in recent_appts %}
+          <tr>
+            <td style="font-size:0.85rem; color:var(--white);">
+              {{ appt.patient.full_name or appt.patient.username }}
+            </td>
+            <td class="dim-text" style="font-size:0.82rem;">
+              {{ appt.appointment_date.strftime('%d %b') }}
+            </td>
+            <td>
+              {% if appt.status == 'pending' %}   <span class="badge-pending">Pending</span>
+              {% elif appt.status == 'confirmed' %}<span class="badge-success">Confirmed</span>
+              {% elif appt.status == 'completed' %}<span class="badge-info">Completed</span>
+              {% else %}                           <span class="badge-danger">Cancelled</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── Quick Actions ─────────────────────────────────────── -->
+  <div class="col-12">
+    <div class="card-dark">
+      <h5 class="mb-3" style="font-family:var(--font-display); font-size:1.3rem;">
+        <i class="bi bi-lightning gold-text me-2"></i>Quick Actions
+      </h5>
+      <div class="d-flex gap-3 flex-wrap">
+        <a href="{{ url_for('admin.manage_therapists') }}" class="btn btn-outline-gold">
+          <i class="bi bi-person-check me-1"></i> Review Therapist Approvals
+          {% if stats.pending_therapists %}
+          <span class="ms-2 badge-danger" style="font-size:0.72rem;">{{ stats.pending_therapists }}</span>
+          {% endif %}
+        </a>
+        <a href="{{ url_for('admin.new_resource') }}" class="btn btn-outline-gold">
+          <i class="bi bi-plus-circle me-1"></i> Publish New Resource
+        </a>
+        <a href="{{ url_for('admin.manage_appointments') }}" class="btn btn-outline-gold">
+          <i class="bi bi-calendar me-1"></i> View Appointments
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

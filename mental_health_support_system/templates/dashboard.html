@@ -1,0 +1,319 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — MindSpace{% endblock %}
+
+{% block content %}
+
+<div class="page-header fade-up">
+
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+```
+<div>
+  <p class="section-label mb-1">Welcome back</p>
+  <h1>{{ current_user.full_name or current_user.username }}
+    <span style="font-size:1.5rem;">👋</span>
+  </h1>
+</div>
+
+<div class="d-flex gap-2">
+  <a href="{{ url_for('appointments.book') }}" class="btn btn-gold">
+    <i class="bi bi-plus-lg me-1"></i> Book Session
+  </a>
+
+  <a href="{{ url_for('mood.tracker') }}" class="btn btn-outline-gold">
+    <i class="bi bi-emoji-smile me-1"></i> Log Mood
+  </a>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ── Quick Stats ─────────────────────────────────────────── -->
+
+<div class="row g-3 mb-4">
+
+  <div class="col-6 col-lg-3 fade-up fade-up-1">
+    <div class="stat-card">
+      <div class="stat-number">{{ upcoming | length }}</div>
+      <div class="stat-label">Upcoming Sessions</div>
+    </div>
+  </div>
+
+  <div class="col-6 col-lg-3 fade-up fade-up-2">
+    <div class="stat-card">
+      <div class="stat-number">{{ recent_moods | length }}</div>
+      <div class="stat-label">Mood Entries (7d)</div>
+    </div>
+  </div>
+
+  <div class="col-6 col-lg-3 fade-up fade-up-3">
+    <div class="stat-card">
+      <div class="stat-number">{{ unread_count }}</div>
+      <div class="stat-label">Unread Messages</div>
+    </div>
+  </div>
+
+  <div class="col-6 col-lg-3 fade-up fade-up-4">
+    <div class="stat-card">
+      <div class="stat-number">{{ resources | length }}</div>
+      <div class="stat-label">New Resources</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="row g-4">
+
+  <!-- ── Upcoming Appointments ──────────────────────────────── -->
+
+  <div class="col-lg-6">
+
+```
+<div class="card-dark h-100">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+
+    <h5 style="font-family:var(--font-display); font-size:1.3rem;">
+      <i class="bi bi-calendar-check gold-text me-2"></i>Upcoming Appointments
+    </h5>
+
+    <a href="{{ url_for('appointments.list_appointments') }}"
+       class="dim-text" style="font-size:0.82rem;">
+      View all →
+    </a>
+
+  </div>
+
+  {% if upcoming %}
+
+    {% for appt in upcoming %}
+
+    <div class="d-flex align-items-center gap-3 py-3"
+         style="border-bottom:1px solid var(--border);">
+
+      <div style="text-align:center; min-width:50px;">
+
+        <div class="gold-text"
+             style="font-size:1.4rem; font-family:var(--font-display);">
+          {{ appt.appointment_date.strftime('%d') }}
+        </div>
+
+        <div class="dim-text"
+             style="font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase;">
+          {{ appt.appointment_date.strftime('%b') }}
+        </div>
+
+      </div>
+
+      <div class="flex-grow-1">
+
+        <div style="font-weight:500;">
+          Dr. {{ appt.therapist.user.full_name or appt.therapist.user.username }}
+        </div>
+
+        <div class="dim-text" style="font-size:0.82rem;">
+          {{ appt.appointment_time.strftime('%I:%M %p') }} ·
+          {{ appt.session_type | capitalize }}
+        </div>
+
+      </div>
+
+      <span class="badge-pending">
+        {{ appt.status | capitalize }}
+      </span>
+
+    </div>
+
+    {% endfor %}
+
+  {% else %}
+
+    <div class="text-center py-4">
+
+      <i class="bi bi-calendar-x"
+         style="font-size:2.5rem; color:var(--white-dim);">
+      </i>
+
+      <p class="dim-text mt-2 mb-3">
+        No upcoming appointments
+      </p>
+
+      <a href="{{ url_for('appointments.book') }}"
+         class="btn btn-gold btn-sm">
+        Book a Session
+      </a>
+
+    </div>
+
+  {% endif %}
+
+</div>
+```
+
+  </div>
+
+  <!-- ── Mood Overview ──────────────────────────────────────── -->
+
+  <div class="col-lg-6">
+
+```
+<div class="card-dark h-100">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+
+    <h5 style="font-family:var(--font-display); font-size:1.3rem;">
+      <i class="bi bi-graph-up gold-text me-2"></i>Mood This Week
+    </h5>
+
+    <a href="{{ url_for('mood.tracker') }}"
+       class="dim-text" style="font-size:0.82rem;">
+      Track mood →
+    </a>
+
+  </div>
+
+  {% if recent_moods %}
+
+    <div style="height:160px; position:relative;">
+
+      <canvas id="moodChart"
+        data-labels='{{ (chart_labels or []) | tojson }}'
+        data-scores='{{ (chart_scores or []) | tojson }}'>
+      </canvas>
+
+    </div>
+
+    <div class="d-flex justify-content-around mt-3">
+
+      {% for log in recent_moods[:5] %}
+
+      <div class="text-center">
+
+        <div style="font-size:1.5rem;">
+          {{ log.mood_emoji }}
+        </div>
+
+        <div class="dim-text" style="font-size:0.68rem;">
+          {{ log.logged_date.strftime('%d %b') }}
+        </div>
+
+      </div>
+
+      {% endfor %}
+
+    </div>
+
+  {% else %}
+
+    <div class="text-center py-4">
+
+      <i class="bi bi-emoji-neutral"
+         style="font-size:2.5rem; color:var(--white-dim);">
+      </i>
+
+      <p class="dim-text mt-2 mb-3">
+        No mood entries yet
+      </p>
+
+      <a href="{{ url_for('mood.tracker') }}"
+         class="btn btn-outline-gold btn-sm">
+        Log Today's Mood
+      </a>
+
+    </div>
+
+  {% endif %}
+
+</div>
+```
+
+  </div>
+
+  <!-- ── Latest Resources ───────────────────────────────────── -->
+
+  <div class="col-12">
+
+```
+<div class="card-dark">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+
+    <h5 style="font-family:var(--font-display); font-size:1.3rem;">
+      <i class="bi bi-book gold-text me-2"></i>Recommended Resources
+    </h5>
+
+    <a href="{{ url_for('resources.list_resources') }}"
+       class="dim-text" style="font-size:0.82rem;">
+      Browse all →
+    </a>
+
+  </div>
+
+  <div class="row g-3">
+
+    {% for r in resources %}
+
+    <div class="col-md-4">
+
+      <div class="resource-card">
+
+        <div class="card-body">
+
+          <span class="category-tag">
+            {{ r.category }}
+          </span>
+
+          <h6 style="font-family:var(--font-display);">
+            {{ r.title }}
+          </h6>
+
+          <p class="dim-text mb-2" style="font-size:0.82rem;">
+            {{ r.content[:80] }}…
+          </p>
+
+          <a href="{{ url_for('resources.view_resource', resource_id=r.id) }}"
+             class="dim-text" style="font-size:0.82rem;">
+            Read more →
+          </a>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    {% else %}
+
+    <div class="col-12 text-center py-3 dim-text">
+      No resources yet.
+    </div>
+
+    {% endfor %}
+
+  </div>
+
+</div>
+```
+
+  </div>
+
+</div>
+
+<!-- /.row -->
+
+<!-- Pass chart data -->
+
+{% if recent_moods %}
+
+<script>
+
+  window.__chartLabels = {{ (chart_labels or []) | tojson }};
+  window.__chartScores = {{ (chart_scores or []) | tojson }};
+
+</script>
+
+{% endif %}
+
+{% endblock %}

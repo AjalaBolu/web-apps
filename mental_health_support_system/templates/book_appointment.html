@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block title %}Book a Session — MindSpace{% endblock %}
+
+{% block content %}
+<div class="page-header fade-up">
+  <p class="section-label mb-1">Therapy Booking</p>
+  <h1>Book a Session</h1>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card-dark fade-up fade-up-1">
+      <h5 class="mb-4" style="font-family:var(--font-display); font-size:1.4rem;">
+        Session Details
+      </h5>
+      <form method="POST" action="{{ url_for('appointments.book') }}">
+
+        <!-- Therapist selection -->
+        <div class="mb-4">
+          <label class="form-label">Select Therapist *</label>
+          <select name="therapist_id" class="form-select" required id="therapistSelect"
+                  onchange="updateTherapistInfo(this)">
+            <option value="">— Choose a therapist —</option>
+            {% for t in therapists %}
+            <option value="{{ t.id }}"
+                    data-spec="{{ t.specialization or 'General Therapy' }}"
+                    data-exp="{{ t.years_experience }}"
+                    data-fee="{{ t.consultation_fee }}">
+              Dr. {{ t.user.full_name or t.user.username }}
+              — {{ t.specialization or 'General Therapy' }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Therapist info card (hidden until selected) -->
+        <div id="therapistInfo" class="mb-4 p-3 rounded" style="background:var(--black-hover); border:1px solid var(--border); display:none;">
+          <div class="row g-2">
+            <div class="col-4 text-center">
+              <div class="dim-text" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:.1em;">Specialization</div>
+              <div class="gold-text" id="infoSpec"></div>
+            </div>
+            <div class="col-4 text-center">
+              <div class="dim-text" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:.1em;">Experience</div>
+              <div class="gold-text" id="infoExp"></div>
+            </div>
+            <div class="col-4 text-center">
+              <div class="dim-text" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:.1em;">Fee</div>
+              <div class="gold-text" id="infoFee"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Date *</label>
+            <input type="date" name="appointment_date" id="appointment_date"
+                   class="form-control" required />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Time *</label>
+            <select name="appointment_time" class="form-select" required>
+              <option value="">— Select time —</option>
+              {% for h in range(8, 20) %}
+                <option value="{{ '%02d:00'|format(h) }}">{{ '%02d:00'|format(h) }}</option>
+                <option value="{{ '%02d:30'|format(h) }}">{{ '%02d:30'|format(h) }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Session Type</label>
+            <select name="session_type" class="form-select">
+              <option value="online">🖥️ Online (Video Call)</option>
+              <option value="in-person">🏥 In-Person</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Notes / Reason for Visit (optional)</label>
+            <textarea name="notes" class="form-control" rows="3"
+                      placeholder="Briefly describe what you'd like to discuss..."></textarea>
+          </div>
+        </div>
+
+        <div class="mt-4 d-flex gap-2">
+          <button type="submit" class="btn btn-gold">
+            <i class="bi bi-check-circle me-1"></i> Confirm Booking
+          </button>
+          <a href="{{ url_for('appointments.list_appointments') }}"
+             class="btn btn-ghost">Cancel</a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- Info sidebar -->
+  <div class="col-lg-4">
+    <div class="card-dark fade-up fade-up-2">
+      <h6 class="gold-text mb-3">
+        <i class="bi bi-info-circle me-1"></i>How It Works
+      </h6>
+      <div class="d-flex flex-column gap-3">
+        {% for step, title, desc in [
+          ('1','Choose','Select a therapist that matches your needs'),
+          ('2','Schedule','Pick a convenient date and time'),
+          ('3','Confirm','Submit and wait for therapist confirmation'),
+          ('4','Connect','Join your session via video call or in-person')
+        ] %}
+        <div class="d-flex gap-3 align-items-start">
+          <div style="width:28px; height:28px; border-radius:50%; background:var(--gold-glow);
+                      border:1px solid var(--border); display:flex; align-items:center;
+                      justify-content:center; flex-shrink:0; color:var(--gold);
+                      font-size:0.78rem; font-weight:600;">{{ step }}</div>
+          <div>
+            <div style="font-weight:500; font-size:0.9rem;">{{ title }}</div>
+            <div class="dim-text" style="font-size:0.82rem;">{{ desc }}</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function updateTherapistInfo(sel) {
+  const opt = sel.options[sel.selectedIndex];
+  const info = document.getElementById('therapistInfo');
+  if (sel.value) {
+    document.getElementById('infoSpec').textContent = opt.dataset.spec;
+    document.getElementById('infoExp').textContent  = opt.dataset.exp + ' yrs';
+    document.getElementById('infoFee').textContent  = '$' + parseFloat(opt.dataset.fee).toFixed(2);
+    info.style.display = 'block';
+  } else {
+    info.style.display = 'none';
+  }
+}
+</script>
+{% endblock %}

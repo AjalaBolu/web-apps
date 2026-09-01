@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+{% set show_footer = true %}
+{% set show_sidebar = false %}
+
+{% block title %}MindSpace — Your Mental Wellness Partner{% endblock %}
+
+{% block content %}
+
+<!-- ══ HERO ══════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="container position-relative">
+    <div class="row align-items-center">
+
+      <div class="col-lg-6">
+        <p class="section-label fade-up">Mental Wellness Platform</p>
+        <h1 class="display-title fade-up fade-up-1">
+          Your Mind<br>Deserves Care
+        </h1>
+        <p class="dim-text mt-3 mb-4 fade-up fade-up-2" style="font-size:1.05rem; max-width:480px;">
+          Connect with certified therapists, track your emotional wellbeing,
+          and access professional mental health resources — all in one private, secure space.
+        </p>
+        <div class="d-flex gap-3 flex-wrap fade-up fade-up-3">
+          <a href="{{ url_for('auth.register') }}" class="btn btn-gold">
+            Start Your Journey <i class="bi bi-arrow-right ms-1"></i>
+          </a>
+          <a href="{{ url_for('main.therapists') }}" class="btn btn-outline-gold">
+            Meet Our Therapists
+          </a>
+        </div>
+
+        <!-- Trust badges -->
+        <div class="d-flex gap-4 mt-5 flex-wrap fade-up fade-up-4">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-shield-check gold-text"></i>
+            <span class="dim-text" style="font-size:0.82rem;">100% Private</span>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-award gold-text"></i>
+            <span class="dim-text" style="font-size:0.82rem;">Certified Therapists</span>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-clock gold-text"></i>
+            <span class="dim-text" style="font-size:0.82rem;">24/7 Support</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating stats panel -->
+      <div class="col-lg-6 d-none d-lg-flex justify-content-center fade-up fade-up-2">
+        <div style="position:relative; width:340px;">
+          <div class="card-dark p-4 text-center" style="border-color:rgba(212,175,55,0.35);">
+            <i class="bi bi-heart-pulse-fill gold-text" style="font-size:3rem;"></i>
+            <h3 class="mt-3" style="font-family:var(--font-display); font-size:1.6rem;">
+              Mental Wellness<br>Dashboard
+            </h3>
+            <hr class="gold-divider" />
+            <div class="row g-3 text-center">
+              <div class="col-4">
+                <div class="gold-text" style="font-family:var(--font-display); font-size:1.8rem;">500+</div>
+                <div class="dim-text" style="font-size:0.72rem; letter-spacing:0.1em;">CLIENTS</div>
+              </div>
+              <div class="col-4">
+                <div class="gold-text" style="font-family:var(--font-display); font-size:1.8rem;">50+</div>
+                <div class="dim-text" style="font-size:0.72rem; letter-spacing:0.1em;">THERAPISTS</div>
+              </div>
+              <div class="col-4">
+                <div class="gold-text" style="font-family:var(--font-display); font-size:1.8rem;">98%</div>
+                <div class="dim-text" style="font-size:0.72rem; letter-spacing:0.1em;">SATISFIED</div>
+              </div>
+            </div>
+          </div>
+          <!-- Decorative blobs -->
+          <div style="position:absolute; top:-20px; right:-20px; width:80px; height:80px;
+                      border-radius:50%; border:1px solid var(--border); opacity:0.5;"></div>
+          <div style="position:absolute; bottom:-15px; left:-15px; width:50px; height:50px;
+                      border-radius:50%; background:var(--gold-glow);"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ FEATURES ═════════════════════════════════════════════ -->
+<section class="py-6" style="padding:5rem 0; background:var(--black-soft);">
+  <div class="container">
+    <div class="text-center mb-5 animate-on-scroll">
+      <p class="section-label">What We Offer</p>
+      <h2 style="font-family:var(--font-display); font-size:2.5rem;">
+        Everything You Need for <span class="gold-text">Mental Wellness</span>
+      </h2>
+    </div>
+
+    <div class="row g-4">
+      {% set features = [
+        ('bi-person-hearts','Book Therapy','Connect with certified therapists and schedule online or in-person sessions at your convenience.'),
+        ('bi-emoji-smile','Mood Tracking','Log your daily mood with our emoji-based tracker and visualise your emotional journey over time.'),
+        ('bi-chat-dots','Secure Messaging','Message your therapist privately through our end-to-end encrypted messaging system.'),
+        ('bi-journal-text','Personal Journal','Write private journal entries to reflect on your thoughts, feelings, and personal growth.'),
+        ('bi-book-half','Wellness Resources','Access curated articles, self-help guides, and motivational content from mental health experts.'),
+        ('bi-shield-lock','Total Privacy','Your data and conversations are protected with industry-standard security and encryption.')
+      ] %}
+
+      {% for icon, title, desc in features %}
+      <div class="col-md-6 col-lg-4 animate-on-scroll">
+        <div class="card-dark h-100">
+          <div class="mb-3">
+            <i class="bi {{ icon }} gold-text" style="font-size:2rem;"></i>
+          </div>
+          <h5 style="font-family:var(--font-display); font-size:1.3rem; margin-bottom:0.5rem;">{{ title }}</h5>
+          <p class="dim-text mb-0" style="font-size:0.9rem;">{{ desc }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ══ THERAPISTS PREVIEW ════════════════════════════════════ -->
+{% if therapists %}
+<section style="padding:5rem 0;">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <p class="section-label">Our Team</p>
+        <h2 style="font-family:var(--font-display); font-size:2rem;">Meet Our Therapists</h2>
+      </div>
+      <a href="{{ url_for('main.therapists') }}" class="btn btn-outline-gold">
+        View All <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+    </div>
+
+    <div class="row g-4">
+      {% for t in therapists %}
+      <div class="col-md-6 col-lg-3 animate-on-scroll">
+        <div class="therapist-card">
+          <div class="avatar avatar-lg mx-auto mb-3">
+            {{ (t.user.full_name or t.user.username)[0].upper() }}
+          </div>
+          <h5>{{ t.user.full_name or t.user.username }}</h5>
+          <p class="therapist-spec mb-2">{{ t.specialization or 'General Therapy' }}</p>
+          <p class="dim-text mb-3" style="font-size:0.82rem;">
+            {{ t.years_experience }} yrs experience
+          </p>
+          <a href="{{ url_for('appointments.book') }}" class="btn btn-outline-gold btn-sm w-100">
+            Book Session
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ══ RESOURCES PREVIEW ═════════════════════════════════════ -->
+{% if resources %}
+<section style="padding:5rem 0; background:var(--black-soft);">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <p class="section-label">Knowledge Hub</p>
+        <h2 style="font-family:var(--font-display); font-size:2rem;">Latest Resources</h2>
+      </div>
+      <a href="{{ url_for('resources.list_resources') }}" class="btn btn-outline-gold">
+        Browse All <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+    </div>
+
+    <div class="row g-4">
+      {% for r in resources %}
+      <div class="col-md-4 animate-on-scroll">
+        <div class="resource-card h-100">
+          <div class="card-body">
+            <span class="category-tag">{{ r.category }}</span>
+            <h5>{{ r.title }}</h5>
+            <p class="dim-text mb-3" style="font-size:0.88rem;">
+              {{ r.content[:120] }}…
+            </p>
+            <a href="{{ url_for('resources.view_resource', resource_id=r.id) }}"
+               class="btn btn-outline-gold btn-sm">
+              Read More
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ══ CTA ═══════════════════════════════════════════════════ -->
+<section style="padding:6rem 0;">
+  <div class="container text-center">
+    <div class="animate-on-scroll">
+      <p class="section-label">Ready to Start?</p>
+      <h2 style="font-family:var(--font-display); font-size:3rem; max-width:600px; margin:0 auto 1rem;">
+        Take the First Step Towards <span class="gold-text">Healing</span>
+      </h2>
+      <p class="dim-text mb-4">
+        Join thousands of people on their mental wellness journey today.
+      </p>
+      <a href="{{ url_for('auth.register') }}" class="btn btn-gold btn-lg">
+        Create Free Account <i class="bi bi-arrow-right ms-2"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

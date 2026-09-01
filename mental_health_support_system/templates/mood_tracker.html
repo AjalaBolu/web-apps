@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block title %}Mood Tracker — MindSpace{% endblock %}
+
+{% block content %}
+<div class="page-header fade-up">
+  <p class="section-label mb-1">Emotional Wellness</p>
+  <h1>Mood Tracker</h1>
+</div>
+
+<div class="row g-4">
+
+  <!-- ── Log Today's Mood ──────────────────────────────────── -->
+  <div class="col-lg-5">
+    <div class="card-dark fade-up fade-up-1">
+      <h5 class="mb-1" style="font-family:var(--font-display); font-size:1.4rem;">
+        How are you feeling today?
+      </h5>
+      <p class="dim-text mb-4" style="font-size:0.85rem;">
+        {{ today_log and ('Already logged: ' + today_log.mood_emoji + ' ' + today_log.mood_label) or 'No entry yet today' }}
+      </p>
+
+      <form method="POST" action="{{ url_for('mood.log_mood') }}">
+
+        <!-- Emoji mood selector -->
+        <div class="mood-selector mb-4">
+          {% for score, (label, emoji) in mood_map.items() %}
+          <label class="mood-option">
+            <input type="radio" name="mood_score" value="{{ score }}"
+                   {{ 'checked' if today_log and today_log.mood_score == score else '' }} />
+            <div class="mood-btn">
+              <span class="emoji">{{ emoji }}</span>
+              <span class="label">{{ label }}</span>
+            </div>
+          </label>
+          {% endfor %}
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Notes (optional)</label>
+          <textarea name="notes" class="form-control" rows="3"
+                    placeholder="What's on your mind today?">{{ today_log.notes if today_log else '' }}</textarea>
+        </div>
+
+        <button type="submit" class="btn btn-gold w-100">
+          {{ '✏️ Update Mood' if today_log else '✅ Log Mood' }}
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── Mood Chart ────────────────────────────────────────── -->
+  <div class="col-lg-7">
+    <div class="card-dark fade-up fade-up-2 h-100">
+      <h5 class="mb-3" style="font-family:var(--font-display); font-size:1.4rem;">
+        <i class="bi bi-graph-up gold-text me-2"></i>Your Mood Trend
+      </h5>
+      {% if logs %}
+      <div style="height:220px; position:relative;">
+        <canvas id="moodChart"
+          data-labels='{{ chart_labels | tojson }}'
+          data-scores='{{ chart_scores | tojson }}'></canvas>
+      </div>
+      <!-- Average -->
+      {% set avg = (chart_scores | sum / chart_scores | length) | round(1) if chart_scores else 0 %}
+      <div class="d-flex justify-content-around mt-4">
+        <div class="text-center">
+          <div class="gold-text" style="font-family:var(--font-display); font-size:2rem;">{{ avg }}</div>
+          <div class="dim-text" style="font-size:0.75rem; text-transform:uppercase; letter-spacing:.1em;">Avg Score</div>
+        </div>
+        <div class="text-center">
+          <div class="gold-text" style="font-family:var(--font-display); font-size:2rem;">{{ logs | length }}</div>
+          <div class="dim-text" style="font-size:0.75rem; text-transform:uppercase; letter-spacing:.1em;">Total Entries</div>
+        </div>
+        <div class="text-center">
+          <div class="gold-text" style="font-family:var(--font-display); font-size:2rem;">
+            {{ chart_scores | max if chart_scores else 0 }}
+          </div>
+          <div class="dim-text" style="font-size:0.75rem; text-transform:uppercase; letter-spacing:.1em;">Best Day</div>
+        </div>
+      </div>
+      {% else %}
+        <div class="text-center py-5">
+          <i class="bi bi-emoji-neutral" style="font-size:3rem; color:var(--white-dim);"></i>
+          <p class="dim-text mt-2">Log your first mood to see your trend.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- ── Mood History ──────────────────────────────────────── -->
+  <div class="col-12">
+    <div class="card-dark">
+      <h5 class="mb-4" style="font-family:var(--font-display); font-size:1.4rem;">
+        <i class="bi bi-clock-history gold-text me-2"></i>Mood History
+      </h5>
+      {% if logs %}
+      <div class="table-responsive">
+        <table class="table-dark-custom w-100">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Mood</th>
+              <th>Score</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for log in logs %}
+            <tr>
+              <td>{{ log.logged_date.strftime('%d %b %Y') }}</td>
+              <td>
+                <span style="font-size:1.3rem;">{{ log.mood_emoji }}</span>
+                <span class="ms-2">{{ log.mood_label }}</span>
+              </td>
+              <td>
+                <div style="display:flex; gap:3px;">
+                  {% for i in range(1, 6) %}
+                  <div style="width:8px; height:8px; border-radius:50%;
+                              background:{{ 'var(--gold)' if i <= log.mood_score else 'var(--border)' }};"></div>
+                  {% endfor %}
+                </div>
+              </td>
+              <td class="dim-text" style="font-size:0.85rem;">
+                {{ log.notes[:60] + '…' if log.notes and log.notes | length > 60 else log.notes or '—' }}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+        <p class="dim-text text-center py-3">No mood history yet.</p>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

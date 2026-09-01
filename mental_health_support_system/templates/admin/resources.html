@@ -1,0 +1,67 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Manage Resources — Admin{% endblock %}
+{% block breadcrumb %}Admin / Resources{% endblock %}
+
+{% block content %}
+<div class="page-header fade-up">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div>
+      <p class="section-label mb-1">Administration</p>
+      <h1>Manage Resources</h1>
+    </div>
+    <a href="{{ url_for('admin.new_resource') }}" class="btn btn-gold">
+      <i class="bi bi-plus-lg me-1"></i> Publish New Resource
+    </a>
+  </div>
+</div>
+
+<div class="card-dark">
+  <div class="table-responsive">
+    <table class="table-dark-custom w-100">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Views</th>
+          <th>Published</th>
+          <th>Created</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in resources %}
+        <tr>
+          <td style="color:var(--white); font-size:0.88rem; max-width:260px;">
+            {{ r.title }}
+          </td>
+          <td><span class="badge-gold">{{ r.category }}</span></td>
+          <td class="dim-text" style="font-size:0.82rem;">
+            <i class="bi bi-eye me-1"></i>{{ r.views }}
+          </td>
+          <td>
+            {% if r.is_published %}
+              <span class="badge-success">Yes</span>
+            {% else %}
+              <span class="badge-danger">No</span>
+            {% endif %}
+          </td>
+          <td class="dim-text" style="font-size:0.82rem;">
+            {{ r.created_at.strftime('%d %b %Y') }}
+          </td>
+          <td>
+            <form method="POST"
+                  action="{{ url_for('admin.delete_resource', r_id=r.id) }}"
+                  style="display:inline;"
+                  onsubmit="return confirm('Delete this resource permanently?');">
+              <button type="submit" class="btn btn-ghost btn-sm" style="color:var(--danger);">
+                <i class="bi bi-trash"></i> Delete
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

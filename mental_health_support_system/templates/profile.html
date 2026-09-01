@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}My Profile — MindSpace{% endblock %}
+
+{% block content %}
+<div class="page-header fade-up">
+  <p class="section-label mb-1">Account</p>
+  <h1>My Profile</h1>
+</div>
+
+<div class="row g-4">
+
+  <!-- ── Profile Form ──────────────────────────────────────── -->
+  <div class="col-lg-8">
+    <div class="card-dark fade-up fade-up-1">
+      <h5 class="mb-4" style="font-family:var(--font-display); font-size:1.4rem;">
+        Personal Information
+      </h5>
+      <form method="POST" action="{{ url_for('dashboard.profile') }}"
+            enctype="multipart/form-data">
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Full Name</label>
+            <input type="text" name="full_name" class="form-control"
+                   value="{{ user.full_name or '' }}" placeholder="Your full name" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Username</label>
+            <input type="text" class="form-control"
+                   value="{{ user.username }}" disabled
+                   style="opacity:0.5;" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-control"
+                   value="{{ user.email }}" disabled style="opacity:0.5;" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" name="phone" class="form-control"
+                   value="{{ user.phone or '' }}" placeholder="+1 234 567 8900" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Date of Birth</label>
+            <input type="date" name="date_of_birth" class="form-control"
+                   value="{{ user.date_of_birth.strftime('%Y-%m-%d') if user.date_of_birth else '' }}" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Gender</label>
+            <select name="gender" class="form-select">
+              <option value="">— Select —</option>
+              {% for val, label in [('male','Male'),('female','Female'),('other','Other'),('prefer_not_to_say','Prefer not to say')] %}
+              <option value="{{ val }}" {{ 'selected' if user.gender == val else '' }}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Bio</label>
+            <textarea name="bio" class="form-control" rows="3"
+                      placeholder="Tell us a little about yourself…">{{ user.bio or '' }}</textarea>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Profile Picture</label>
+            <input type="file" name="profile_picture" class="form-control"
+                   accept="image/*" />
+            <small class="dim-text">PNG, JPG, GIF up to 5MB</small>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <button type="submit" class="btn btn-gold">
+            <i class="bi bi-save me-1"></i> Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── Right Panel ───────────────────────────────────────── -->
+  <div class="col-lg-4 d-flex flex-column gap-4">
+
+    <!-- Avatar preview -->
+    <div class="card-dark text-center fade-up fade-up-2">
+      <div class="avatar avatar-lg mx-auto mb-3">
+        {% if user.profile_picture and user.profile_picture != 'default.png' %}
+          <img src="{{ url_for('static', filename='uploads/' + user.profile_picture) }}"
+               alt="avatar" />
+        {% else %}
+          {{ (user.full_name or user.username)[0].upper() }}
+        {% endif %}
+      </div>
+      <h6 style="font-family:var(--font-display);">{{ user.full_name or user.username }}</h6>
+      <p class="dim-text" style="font-size:0.82rem;">{{ user.email }}</p>
+      <span class="badge-gold">{{ user.role | capitalize }}</span>
+      <hr class="gold-divider" />
+      <p class="dim-text" style="font-size:0.78rem;">
+        Member since {{ user.created_at.strftime('%B %Y') }}
+      </p>
+    </div>
+
+    <!-- Change Password -->
+    <div class="card-dark fade-up fade-up-3">
+      <h5 class="mb-3" style="font-family:var(--font-display); font-size:1.2rem;">
+        <i class="bi bi-lock gold-text me-2"></i>Change Password
+      </h5>
+      <form method="POST" action="{{ url_for('dashboard.change_password') }}">
+        <div class="mb-3">
+          <label class="form-label">Current Password</label>
+          <input type="password" name="old_password" class="form-control"
+                 placeholder="••••••••" required />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">New Password</label>
+          <input type="password" name="new_password" id="password" class="form-control"
+                 placeholder="••••••••" required />
+          <small id="password-strength" class="ms-1"></small>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Confirm New Password</label>
+          <input type="password" name="confirm_password" class="form-control"
+                 placeholder="••••••••" required />
+        </div>
+        <button type="submit" class="btn btn-outline-gold w-100">
+          Update Password
+        </button>
+      </form>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

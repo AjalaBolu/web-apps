@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block title %}Messages — MindSpace{% endblock %}
+
+{% block content %}
+<div class="page-header fade-up">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div>
+      <p class="section-label mb-1">Secure Messaging</p>
+      <h1>Messages</h1>
+    </div>
+    <button class="btn btn-gold" id="startNewChat">
+      <i class="bi bi-pencil-square me-1"></i> New Message
+    </button>
+  </div>
+</div>
+
+<div class="chat-container fade-up">
+
+  <!-- ── Contacts Sidebar ──────────────────────────────────── -->
+  <div class="chat-sidebar">
+    <div class="p-3 border-bottom" style="border-color:var(--border) !important;">
+      <input type="text" class="form-control form-control-sm"
+             placeholder="Search conversations…" id="contactSearch" />
+    </div>
+
+    {% if contacts %}
+      {% for contact in contacts %}
+      <a href="{{ url_for('messages.conversation', contact_id=contact.id) }}"
+         class="contact-item text-decoration-none
+                {{ 'active' if active_contact and active_contact.id == contact.id else '' }}">
+        <div class="avatar">{{ (contact.full_name or contact.username)[0].upper() }}</div>
+        <div class="flex-grow-1 overflow-hidden">
+          <div style="font-size:0.88rem; color:var(--white); font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+            {{ contact.full_name or contact.username }}
+          </div>
+          <div class="dim-text" style="font-size:0.75rem;">
+            {{ contact.role | capitalize }}
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    {% else %}
+      <div class="p-3 text-center dim-text" style="font-size:0.85rem; margin-top:2rem;">
+        No conversations yet.<br/>
+        Start by messaging a therapist.
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- ── Chat Main ─────────────────────────────────────────── -->
+  <div class="chat-main">
+
+    {% if active_contact %}
+    <!-- Header -->
+    <div class="chat-header">
+      <div class="d-flex align-items-center gap-3">
+        <div class="avatar">{{ (active_contact.full_name or active_contact.username)[0].upper() }}</div>
+        <div>
+          <div style="font-weight:500;">{{ active_contact.full_name or active_contact.username }}</div>
+          <div class="dim-text" style="font-size:0.78rem;">{{ active_contact.role | capitalize }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="chat-messages" id="chatMessages">
+      {% if messages %}
+        {% for msg in messages %}
+        <div class="d-flex flex-column {{ 'align-items-end' if msg.sender_id == current_user.id else 'align-items-start' }}">
+          <div class="message-bubble {{ 'sent' if msg.sender_id == current_user.id else 'received' }}">
+            {{ msg.content }}
+          </div>
+          <div class="message-time px-1">
+            {{ msg.sent_at.strftime('%I:%M %p · %d %b') }}
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="text-center dim-text py-4" style="font-size:0.9rem;">
+          <i class="bi bi-chat-dots" style="font-size:2rem; display:block; margin-bottom:.5rem;"></i>
+          No messages yet. Say hello!
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Input -->
+    <div class="chat-input-area">
+      <form method="POST" action="{{ url_for('messages.send_message') }}"
+            class="d-flex gap-2 w-100">
+        <input type="hidden" name="receiver_id" value="{{ active_contact.id }}" />
+        <input type="text" name="content" class="form-control"
+               placeholder="Type a message…" required autocomplete="off" />
+        <button type="submit" class="btn btn-gold" style="border-radius:var(--radius-sm); padding:.6rem 1.2rem;">
+          <i class="bi bi-send-fill"></i>
+        </button>
+      </form>
+    </div>
+
+    {% else %}
+    <!-- Empty state -->
+    <div class="d-flex flex-column align-items-center justify-content-center h-100 dim-text">
+      <i class="bi bi-chat-square-dots" style="font-size:3rem;"></i>
+      <p class="mt-3 mb-1">Select a conversation</p>
+      <p style="font-size:0.85rem;">or start a new message to a therapist</p>
+    </div>
+    {% endif %}
+
+  </div><!-- /.chat-main -->
+
+</div><!-- /.chat-container -->
+
+<!-- New Chat Modal -->
+<div class="modal fade" id="newChatModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background:var(--black-card); border:1px solid var(--border);">
+      <div class="modal-header" style="border-color:var(--border);">
+        <h5 class="modal-title gold-text" style="font-family:var(--font-display);">New Message</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p class="dim-text mb-3" style="font-size:0.88rem;">
+          To start a conversation, book an appointment with a therapist first,
+          or enter a therapist's user ID below.
+        </p>
+        <form method="GET" action="{{ url_for('messages.conversation', contact_id=0) }}"
+              id="newChatForm">
+          <label class="form-label">Therapist User ID</label>
+          <div class="d-flex gap-2">
+            <input type="number" id="newContactId" class="form-control"
+                   placeholder="Enter user ID" min="1" />
+            <button type="button" class="btn btn-gold" onclick="goToConvo()">Go</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function goToConvo() {
+  const id = document.getElementById('newContactId').value;
+  if (id) window.location.href = `/messages/conversation/${id}`;
+}
+
+// Live contact search filter
+document.getElementById('contactSearch')?.addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  document.querySelectorAll('.contact-item').forEach(item => {
+    item.style.display = item.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+});
+</script>
+{% endblock %}

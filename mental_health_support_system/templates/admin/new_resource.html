@@ -1,0 +1,59 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}New Resource — Admin{% endblock %}
+{% block breadcrumb %}Admin / Resources / New{% endblock %}
+
+{% block content %}
+<div class="page-header fade-up">
+  <div class="d-flex justify-content-between align-items-center">
+    <div>
+      <p class="section-label mb-1">Administration</p>
+      <h1>Publish New Resource</h1>
+    </div>
+    <a href="{{ url_for('admin.manage_resources') }}" class="btn btn-ghost">
+      <i class="bi bi-arrow-left me-1"></i> Back
+    </a>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card-dark fade-up fade-up-1">
+      <form method="POST" action="{{ url_for('admin.new_resource') }}">
+
+        <div class="mb-3">
+          <label class="form-label">Resource Title *</label>
+          <input type="text" name="title" class="form-control"
+                 placeholder="e.g. Managing Anxiety: 10 Proven Techniques"
+                 required />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Category</label>
+          <select name="category" class="form-select">
+            {% for cat in ['article','self-help','wellness','motivational','guide'] %}
+            <option value="{{ cat }}">{{ cat | capitalize }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label">Content *</label>
+          <textarea name="content" class="form-control" rows="14"
+                    placeholder="Write the full resource content here…"
+                    required></textarea>
+          <small class="dim-text">Supports plain text. Use blank lines to separate paragraphs.</small>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-gold">
+            <i class="bi bi-send me-1"></i> Publish Resource
+          </button>
+          <a href="{{ url_for('admin.manage_resources') }}" class="btn btn-ghost">
+            Cancel
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

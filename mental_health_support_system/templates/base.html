@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}MindSpace — Online Therapy & Mental Health Support{% endblock %}</title>
+
+  <!-- Bootstrap 5 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Google Fonts preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+
+  {% block head %}{% endblock %}
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════════════════
+       NAVBAR
+  ══════════════════════════════════════════════════════════ -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid px-4">
+
+      <!-- Brand -->
+      <a class="navbar-brand" href="{{ url_for('main.index') }}">
+        <i class="bi bi-heart-pulse-fill me-2"></i>Mind<span>Space</span>
+      </a>
+
+      <!-- Mobile toggle -->
+      <button class="navbar-toggler" type="button"
+              data-bs-toggle="collapse" data-bs-target="#navMain">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Links -->
+      <div class="collapse navbar-collapse" id="navMain">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('main.therapists') }}">Therapists</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('resources.list_resources') }}">Resources</a>
+          </li>
+          {% if current_user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.home') }}">Dashboard</a>
+          </li>
+          {% endif %}
+        </ul>
+
+        <!-- Right actions -->
+        <ul class="navbar-nav align-items-center gap-2">
+          {% if current_user.is_authenticated %}
+            <!-- Unread badge -->
+            <li class="nav-item">
+              <a class="nav-link position-relative" href="{{ url_for('messages.inbox') }}">
+                <i class="bi bi-chat-dots fs-5"></i>
+              </a>
+            </li>
+            <!-- User menu -->
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle d-flex align-items-center gap-2"
+                 href="#" data-bs-toggle="dropdown">
+                <div class="avatar">
+                  {% if current_user.profile_picture and current_user.profile_picture != 'default.png' %}
+                    <img src="{{ url_for('static', filename='uploads/' + current_user.profile_picture) }}" alt="avatar" />
+                  {% else %}
+                    {{ (current_user.full_name or current_user.username)[0].upper() }}
+                  {% endif %}
+                </div>
+                <span style="font-size:0.88rem; color:var(--white-dim);">
+                  {{ current_user.full_name or current_user.username }}
+                </span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end"
+                  style="background:var(--black-card); border:1px solid var(--border);">
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('dashboard.profile') }}"
+                     style="color:var(--white-dim); font-size:0.88rem;">
+                    <i class="bi bi-person me-2"></i>Profile
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider" style="border-color:var(--border);" /></li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('auth.logout') }}"
+                     style="color:var(--danger); font-size:0.88rem;">
+                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                  </a>
+                </li>
+              </ul>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="btn btn-ghost btn-sm" href="{{ url_for('auth.login') }}">Log In</a>
+            </li>
+            <li class="nav-item">
+              <a class="btn btn-gold btn-sm" href="{{ url_for('auth.register') }}">Get Started</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div><!-- /.collapse -->
+
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════════════════
+       FLASH MESSAGES
+  ══════════════════════════════════════════════════════════ -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="position-fixed top-0 end-0 p-3" style="z-index:9999; margin-top:70px;">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible shadow" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- ══════════════════════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════════════════════ -->
+  {% block body %}
+    {% if current_user.is_authenticated and show_sidebar is not defined %}
+      <!-- Dashboard layout with sidebar -->
+      <div class="page-wrapper">
+
+        <!-- Sidebar -->
+        <aside class="sidebar d-none d-lg-block">
+          <p class="sidebar-heading">Navigation</p>
+          <ul class="sidebar-menu">
+            <li>
+              <a href="{{ url_for('dashboard.home') }}">
+                <i class="bi bi-grid-1x2"></i> Dashboard
+              </a>
+            </li>
+            <li>
+              <a href="{{ url_for('appointments.list_appointments') }}">
+                <i class="bi bi-calendar-check"></i> Appointments
+              </a>
+            </li>
+            <li>
+              <a href="{{ url_for('appointments.book') }}">
+                <i class="bi bi-plus-circle"></i> Book Session
+              </a>
+            </li>
+            <li>
+              <a href="{{ url_for('messages.inbox') }}">
+                <i class="bi bi-chat-dots"></i> Messages
+              </a>
+            </li>
+            <hr class="sidebar-divider" />
+            <p class="sidebar-heading">Wellness</p>
+            <li>
+              <a href="{{ url_for('mood.tracker') }}">
+                <i class="bi bi-emoji-smile"></i> Mood Tracker
+              </a>
+            </li>
+            <li>
+              <a href="{{ url_for('journal.list_entries') }}">
+                <i class="bi bi-journal-text"></i> Journal
+              </a>
+            </li>
+            <li>
+              <a href="{{ url_for('resources.list_resources') }}">
+                <i class="bi bi-book"></i> Resources
+              </a>
+            </li>
+            <hr class="sidebar-divider" />
+            <li>
+              <a href="{{ url_for('dashboard.profile') }}">
+                <i class="bi bi-person-gear"></i> Profile
+              </a>
+            </li>
+            <li>
+              <a href="{{ url_for('auth.logout') }}" style="color:var(--danger);">
+                <i class="bi bi-box-arrow-right"></i> Logout
+              </a>
+            </li>
+          </ul>
+        </aside>
+
+        <!-- Main content -->
+        <main class="main-content">
+          {% block content %}{% endblock %}
+        </main>
+
+      </div><!-- /.page-wrapper -->
+
+    {% else %}
+      <!-- Public / full-width layout -->
+      {{ self.content() }}
+    {% endif %}
+  {% endblock %}
+
+  <!-- ══════════════════════════════════════════════════════════
+       FOOTER (hidden on dashboard pages)
+  ══════════════════════════════════════════════════════════ -->
+  {% if not current_user.is_authenticated or show_footer is defined %}
+  <footer>
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <h5><i class="bi bi-heart-pulse-fill me-2"></i>MindSpace</h5>
+          <p>A safe, private, and supportive space for your mental wellness journey.</p>
+        </div>
+        <div class="col-md-2">
+          <h5>Platform</h5>
+          <ul class="list-unstyled">
+            <li><a href="{{ url_for('main.therapists') }}">Therapists</a></li>
+            <li><a href="{{ url_for('resources.list_resources') }}">Resources</a></li>
+            <li><a href="{{ url_for('auth.register') }}">Sign Up</a></li>
+          </ul>
+        </div>
+        <div class="col-md-2">
+          <h5>Support</h5>
+          <ul class="list-unstyled">
+            <li><a href="#">Help Centre</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Use</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <h5>Emergency</h5>
+          <p style="color:var(--white-dim);">
+            If you are in crisis, please contact your local emergency services
+            or a crisis helpline immediately.
+          </p>
+          <span class="badge-gold">🆘 Crisis: 0800-xxx-xxxx</span>
+        </div>
+      </div>
+      <div class="footer-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <span>© 2024 MindSpace. All rights reserved.</span>
+        <span>Built with ❤️ for mental wellness</span>
+      </div>
+    </div>
+  </footer>
+  {% endif %}
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  {% block scripts %}{% endblock %}
+
+</body>
+</html>

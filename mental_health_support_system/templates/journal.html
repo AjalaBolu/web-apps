@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}My Journal — MindSpace{% endblock %}
+
+{% block content %}
+<div class="page-header fade-up">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div>
+      <p class="section-label mb-1">Personal Wellness</p>
+      <h1>My Journal</h1>
+    </div>
+    <a href="{{ url_for('journal.new_entry') }}" class="btn btn-gold">
+      <i class="bi bi-plus-lg me-1"></i> New Entry
+    </a>
+  </div>
+</div>
+
+{% if entries %}
+<div class="row g-4">
+  {% for entry in entries %}
+  <div class="col-md-6 col-lg-4 animate-on-scroll">
+    <div class="card-dark h-100 d-flex flex-column">
+      <!-- Header -->
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <div style="font-size:0.78rem; color:var(--white-dim);">
+          {{ entry.created_at.strftime('%d %b %Y · %I:%M %p') }}
+        </div>
+        {% if entry.mood_score %}
+        <span style="font-size:1.2rem;">
+          {{ ['','😞','😢','😐','😊','😄'][entry.mood_score] }}
+        </span>
+        {% endif %}
+      </div>
+
+      <h5 style="font-family:var(--font-display);">
+        {{ entry.title or 'Untitled Entry' }}
+      </h5>
+      <p class="dim-text flex-grow-1" style="font-size:0.88rem; line-height:1.6;">
+        {{ entry.content[:150] }}{{ '…' if entry.content | length > 150 else '' }}
+      </p>
+
+      <div class="d-flex justify-content-between align-items-center mt-3 pt-3"
+           style="border-top:1px solid var(--border);">
+        <span class="dim-text" style="font-size:0.78rem;">
+          <i class="bi bi-lock-fill me-1"></i>Private
+        </span>
+        <form method="POST"
+              action="{{ url_for('journal.delete_entry', entry_id=entry.id) }}"
+              onsubmit="return confirm('Delete this entry permanently?');">
+          <button type="submit" class="btn btn-ghost btn-sm" style="color:var(--danger);">
+            <i class="bi bi-trash"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% else %}
+<div class="text-center py-5 card-dark" style="max-width:480px; margin:0 auto;">
+  <i class="bi bi-journal-text" style="font-size:3rem; color:var(--white-dim);"></i>
+  <h5 class="mt-3" style="font-family:var(--font-display);">Start Your Journal</h5>
+  <p class="dim-text mb-4">
+    Writing your thoughts helps you understand your emotions better.
+    Your entries are completely private.
+  </p>
+  <a href="{{ url_for('journal.new_entry') }}" class="btn btn-gold">
+    Write First Entry
+  </a>
+</div>
+{% endif %}
+{% endblock %}
