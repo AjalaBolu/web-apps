@@ -128,10 +128,23 @@
                             <span><i class="bi bi-palette me-1"></i>{{ car.color }}</span>
                         </div>
 
+                        <!-- Tier Badge -->
+                        <div class="car-tier-badge" style="background-color: {{ TIER_COLORS[car.tier] }}; color:#000; display:inline-block; padding:2px 8px; border-radius:6px; font-weight:bold; font-size:0.8rem; margin-top:10px; margin-bottom:6px;">
+                            {{ car.tier }}-Tier
+                        </div>
+
+                        <!-- Tier Features -->
+                        <div class="car-tier-features small text-muted mb-2">
+                            {% for feature in TIER_FEATURES[car.tier][:3] %}
+                                <span class="tier-feature-pill"><i class="bi bi-check-circle me-1"></i>{{ feature }}</span>
+                            {% endfor %}
+                        </div>
+
                         <!-- Price and Book Button -->
                         <div class="car-footer">
                             <div class="car-price">
                                 <span class="price-amount">${{ "%.2f"|format(car.price_per_day) }}</span>
+                                <span class="price-naira d-block small text-muted">{{ car.price_per_day|naira }}</span>
                                 <span class="price-label">/day</span>
                             </div>
                             {% if session.get('user_id') %}
