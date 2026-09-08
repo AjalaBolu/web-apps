@@ -48,7 +48,7 @@
     <div class="col-xl-2 col-md-4 col-6">
         <div class="admin-stat-card border-dark">
             <i class="bi bi-cash-stack stat-icon text-dark"></i>
-            <h3 class="stat-num">${{ "%.0f"|format(stats.total_revenue) }}</h3>
+            <h3 class="stat-num">{{ stats.total_revenue|naira }}</h3>
             <p class="stat-label">Revenue</p>
         </div>
     </div>
@@ -104,7 +104,7 @@
                         <td>{{ b.car_name }}</td>
                         <td>{{ b.pickup_date }}</td>
                         <td>{{ b.return_date }}</td>
-                        <td class="fw-bold text-success">${{ "%.2f"|format(b.total_price) }}</td>
+                        <td class="fw-bold text-success">{{ b.total_price|naira }}</td>
                         <td>
                             <span class="badge status-badge status-{{ b.status }}">
                                 {{ b.status|capitalize }}

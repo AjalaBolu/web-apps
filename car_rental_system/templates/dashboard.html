@@ -93,7 +93,7 @@
                                 <td>{{ booking.pickup_date }}</td>
                                 <td>{{ booking.return_date }}</td>
                                 <td>{{ booking.total_days }} days</td>
-                                <td class="fw-bold text-success">${{ "%.2f"|format(booking.total_price) }}</td>
+                                <td class="fw-bold text-success">${{ (booking.total_price) }}</td>
                                 <td>
                                     <span class="badge status-badge status-{{ booking.status }}">
                                         {{ booking.status|capitalize }}

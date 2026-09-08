@@ -39,14 +39,13 @@
                         <td>{{ b.pickup_date }}</td>
                         <td>{{ b.return_date }}</td>
                         <td>{{ b.total_days }}</td>
-                        <td class="fw-bold text-success">${{ "%.2f"|format(b.total_price) }}</td>
+                        <td class="fw-bold text-success">{{ b.total_price|naira }}</td>
                         <td>
                             <span class="badge status-badge status-{{ b.status }}">
                                 {{ b.status|capitalize }}
                             </span>
                         </td>
                         <td>
-                            <!-- Update booking status form -->
                             <form method="POST" action="{{ url_for('admin_update_booking', booking_id=b.id) }}" class="d-flex gap-1">
                                 <select name="status" class="form-select form-select-sm" style="width:120px;">
                                     <option value="pending" {% if b.status=='pending' %}selected{% endif %}>Pending</option>

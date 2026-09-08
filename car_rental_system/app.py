@@ -30,10 +30,10 @@ def naira_filter(usd_amount):
 
 @app.context_processor
 def inject_tier_data():
-    return dict(TIER_FEATURES=TIER_FEATURES, TIER_COLORS=TIER_COLORS)
+    return dict(TIER_FEATURES=TIER_FEATURES, TIER_COLORS=TIER_COLORS, NGN_RATE=USD_TO_NGN_RATE)
 
 from routes import register_routes
-register_routes(app, mysql)
+register_routes(app, mysql, ngn_rate=USD_TO_NGN_RATE)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

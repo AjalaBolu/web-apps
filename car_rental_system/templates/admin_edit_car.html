@@ -47,12 +47,21 @@
                     </select>
                 </div>
                 <div class="col-md-3">
+                    <label class="form-label fw-semibold">Tier</label>
+                    <select name="tier" class="form-select">
+                        {% for t in ['S','A','B','C','D','E'] %}
+                        <option value="{{ t }}" {% if car.tier == t %}selected{% endif %}>{{ t }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
                     <label class="form-label fw-semibold">Seats</label>
                     <input type="number" name="seats" class="form-control" value="{{ car.seats }}" min="2" max="15">
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold">Price Per Day ($)</label>
+                    <label class="form-label fw-semibold">Price Per Day</label>
                     <input type="number" name="price_per_day" class="form-control" step="0.01" value="{{ car.price_per_day }}" required>
+                    <small class="text-muted">Base price ({{ car.price_per_day|naira }})</small>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label fw-semibold">Status</label>
@@ -61,6 +70,10 @@
                         <option value="rented" {% if car.status=='rented' %}selected{% endif %}>Rented</option>
                         <option value="maintenance" {% if car.status=='maintenance' %}selected{% endif %}>Maintenance</option>
                     </select>
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-semibold">Image URL</label>
+                    <input type="text" name="image_url" class="form-control" value="{{ car.image_url or '' }}" placeholder="https://...">
                 </div>
                 <div class="col-12">
                     <label class="form-label fw-semibold">Description</label>

@@ -143,8 +143,7 @@
                         <!-- Price and Book Button -->
                         <div class="car-footer">
                             <div class="car-price">
-                                <span class="price-amount">${{ "%.2f"|format(car.price_per_day) }}</span>
-                                <span class="price-naira d-block small text-muted">{{ car.price_per_day|naira }}</span>
+                                <span class="price-amount">{{ car.price_per_day|naira }}</span>
                                 <span class="price-label">/day</span>
                             </div>
                             {% if session.get('user_id') %}
