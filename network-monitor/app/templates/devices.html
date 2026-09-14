@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Devices — Network Monitor{% endblock %}
+{% block content %}
+<h1>Devices</h1>
+<table class="table">
+  <thead>
+    <tr><th>Device</th><th>IP</th><th>OS</th><th>Status</th><th>CPU</th><th>RAM</th><th>Disk</th><th>Last seen</th></tr>
+  </thead>
+  <tbody>
+    {% for d, m in rows %}
+    <tr>
+      <td><a href="{{ url_for('device_detail_page', device_id=d.id) }}">{{ d.hostname }}</a></td>
+      <td>{{ d.ip_address or "—" }}</td>
+      <td>{{ d.operating_system or "—" }}</td>
+      <td><span class="pill {{ d.status }}">{{ d.status }}</span></td>
+      <td>{{ "%.1f"|format(m.cpu_usage) if m else "—" }}%</td>
+      <td>{{ "%.1f"|format(m.memory_usage) if m else "—" }}%</td>
+      <td>{{ "%.1f"|format(m.disk_usage) if m else "—" }}%</td>
+      <td>{{ d.last_seen.strftime('%Y-%m-%d %H:%M:%S') if d.last_seen else "never" }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="8">No devices yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

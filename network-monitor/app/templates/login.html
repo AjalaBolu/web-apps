@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login — Network Monitor</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="login-body">
+  <form class="login-card" method="POST">
+    <h1>NetMonitor</h1>
+    <p class="subtitle">Sign in to your dashboard</p>
+    {% if error %}<p class="error">{{ error }}</p>{% endif %}
+    <label>Email</label>
+    <input type="email" name="email" required>
+    <label>Password</label>
+    <input type="password" name="password" required>
+    <button type="submit">Log in</button>
+  </form>
+</body>
+</html>

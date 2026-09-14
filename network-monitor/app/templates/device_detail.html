@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}{{ device.hostname }} — Network Monitor{% endblock %}
+{% block content %}
+<h1>{{ device.hostname }}</h1>
+<p class="subtitle">{{ device.ip_address or "no IP" }} · {{ device.operating_system or "unknown OS" }}
+  · <span class="pill {{ device.status }}">{{ device.status }}</span></p>
+
+<canvas id="historyChart" height="90"></canvas>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+const labels = {{ history|map(attribute='timestamp')|map('string')|list|tojson }};
+const cpu = {{ history|map(attribute='cpu_usage')|list|tojson }};
+const mem = {{ history|map(attribute='memory_usage')|list|tojson }};
+const disk = {{ history|map(attribute='disk_usage')|list|tojson }};
+const latency = {{ history|map(attribute='latency')|list|tojson }};
+
+new Chart(document.getElementById('historyChart'), {
+  type: 'line',
+  data: {
+    labels: labels,
+    datasets: [
+      { label: 'CPU %', data: cpu, borderColor: '#e63946', tension: 0.2 },
+      { label: 'Memory %', data: mem, borderColor: '#2a9d8f', tension: 0.2 },
+      { label: 'Disk %', data: disk, borderColor: '#e9c46a', tension: 0.2 },
+      { label: 'Latency (ms)', data: latency, borderColor: '#457b9d', tension: 0.2, yAxisID: 'y1' },
+    ]
+  },
+  options: {
+    scales: {
+      y: { beginAtZero: true, max: 100, title: { display: true, text: '%' } },
+      y1: { position: 'right', beginAtZero: true, grid: { drawOnChartArea: false }, title: { display: true, text: 'ms' } }
+    }
+  }
+});
+</script>
+{% endblock %}

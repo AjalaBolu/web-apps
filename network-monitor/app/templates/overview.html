@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Overview — Network Monitor{% endblock %}
+{% block content %}
+<h1>Overview</h1>
+<div class="cards">
+  <div class="card"><span class="num">{{ total }}</span><span class="label">Total devices</span></div>
+  <div class="card ok"><span class="num">{{ online }}</span><span class="label">Online</span></div>
+  <div class="card bad"><span class="num">{{ offline }}</span><span class="label">Offline</span></div>
+  <div class="card warn"><span class="num">{{ active_alerts }}</span><span class="label">Active alerts</span></div>
+</div>
+
+<h2>Devices</h2>
+<table class="table">
+  <thead><tr><th>Host</th><th>IP</th><th>Status</th><th>Last seen</th></tr></thead>
+  <tbody>
+    {% for d in devices %}
+    <tr>
+      <td><a href="{{ url_for('device_detail_page', device_id=d.id) }}">{{ d.hostname }}</a></td>
+      <td>{{ d.ip_address or "—" }}</td>
+      <td><span class="pill {{ d.status }}">{{ d.status }}</span></td>
+      <td>{{ d.last_seen.strftime('%Y-%m-%d %H:%M:%S') if d.last_seen else "never" }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="4">No devices reporting yet. Start the agent to see data here.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

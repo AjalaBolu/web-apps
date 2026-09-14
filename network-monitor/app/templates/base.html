@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Network Monitor{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <nav class="topnav">
+    <div class="brand">NetMonitor</div>
+    <a href="{{ url_for('overview') }}">Overview</a>
+    <a href="{{ url_for('devices_page') }}">Devices</a>
+    <a href="{{ url_for('alerts_page') }}">Alerts</a>
+    <a href="{{ url_for('logout') }}" class="logout">Logout</a>
+  </nav>
+  <main class="content">
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>
