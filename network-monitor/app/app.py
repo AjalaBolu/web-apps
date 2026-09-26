@@ -1,6 +1,8 @@
 import os
 import jwt
 import datetime
+import threading
+import time
 from functools import wraps
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 
@@ -18,7 +20,28 @@ def create_app():
         _seed_admin(app)
 
     register_routes(app)
+    _start_offline_checker(app)
     return app
+
+
+def _start_offline_checker(app):
+    """Runs mark_offline_devices() on a timer, independent of whether any
+    agent is actively posting metrics. Without this, a device's status is
+    only ever re-evaluated as a side effect of SOME device's metrics POST —
+    so if monitoring stops entirely, devices stay stuck at their last known
+    status forever. A daemon thread keeps this check running in the
+    background for as long as the web process is alive."""
+    def loop():
+        with app.app_context():
+            while True:
+                try:
+                    mark_offline_devices(app)
+                except Exception as e:
+                    app.logger.error(f"Background offline check failed: {e}")
+                time.sleep(30)
+
+    thread = threading.Thread(target=loop, daemon=True)
+    thread.start()
 
 
 def _seed_admin(app):
