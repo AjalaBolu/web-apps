@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin - Campus Shuttle Tracker</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="page">
+  <header>
+    <h1>Admin Dashboard</h1><span class="badge">Simulated GPS</span>
+    <div class="spacer"></div><div id="user-info"></div>
+  </header>
+  <div id="banner" class="banner hidden"></div>
+  <div class="container">
+    <section class="card">
+      <h3>Shuttles</h3>
+      <div class="tablewrap"><table id="shuttle-table"></table></div>
+      <div class="formrow">
+        <input id="new-shuttle" placeholder="New shuttle number, e.g. Shuttle 04">
+        <select id="new-driver"></select>
+        <button id="add-shuttle" class="primary">Add shuttle</button>
+      </div>
+    </section>
+    <section class="card">
+      <h3>Active trips</h3>
+      <div class="tablewrap"><table id="trip-table"></table></div>
+    </section>
+    <section class="card">
+      <h3>Campus stops</h3>
+      <div class="tablewrap"><table id="stop-table"></table></div>
+      <div class="formrow">
+        <input id="new-stop-name" placeholder="Stop name">
+        <input id="new-stop-lat" placeholder="Latitude" size="10">
+        <input id="new-stop-lng" placeholder="Longitude" size="10">
+        <button id="add-stop" class="primary">Add stop</button>
+      </div>
+    </section>
+  </div>
+  <script src="/static/common.js"></script>
+  <script src="/static/admin.js"></script>
+</body>
+</html>

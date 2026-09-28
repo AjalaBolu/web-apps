@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login - Campus Shuttle Tracker</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="centered">
+  <div class="card login">
+    <h1>Campus Shuttle Tracker</h1>
+    <p class="muted">Sign in to continue</p>
+    <div id="banner" class="banner hidden"></div>
+    <label for="email">Email</label>
+    <input id="email" type="email" autocomplete="username">
+    <label for="password">Password</label>
+    <input id="password" type="password" autocomplete="current-password">
+    <button id="login-btn" class="primary">Log in</button>
+  </div>
+  <script src="/static/common.js"></script>
+  <script>
+    async function doLogin() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      if (!email || !password) { showBanner("Enter your email and password."); return; }
+      try {
+        const user = await api("POST", "/api/login", { email, password });
+        location.href = HOME[user.role] || "/";
+      } catch (e) { showBanner(e.message); }
+    }
+    document.getElementById("login-btn").onclick = doLogin;
+    document.getElementById("password").addEventListener("keydown", (e) => { if (e.key === "Enter") doLogin(); });
+  </script>
+</body>
+</html>

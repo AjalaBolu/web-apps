@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: campus-shuttle-tracker
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    # seed.py only fills an empty database, so it is safe to run on every start.
+    # Single worker: the GPS simulator runs as a thread inside the app.
+    startCommand: python seed.py && gunicorn -w 1 --threads 4 -b 0.0.0.0:$PORT app:app
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      - key: SECRET_KEY
+        generateValue: true
+      - key: AVG_SPEED_KMH
+        value: "20"
+      - key: SIM_INTERVAL_SEC
+        value: "2"
+      # Set these three in the Render dashboard (values are not stored in git):
+      - key: SEED_ADMIN_PASSWORD
+        sync: false
+      - key: SEED_DRIVER_PASSWORD
+        sync: false
+      - key: SEED_STUDENT_PASSWORD
+        sync: false

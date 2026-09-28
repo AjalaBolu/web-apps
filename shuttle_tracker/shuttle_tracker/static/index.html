@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Campus Shuttle Tracker</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1>Campus Shuttle Tracker</h1>
+    <span class="badge" title="GPS data is simulated for this prototype">Simulated GPS</span>
+    <div class="spacer"></div><div id="user-info"></div>
+  </header>
+  <div id="banner" class="banner hidden"></div>
+  <main>
+    <div id="map"></div>
+    <aside>
+      <label for="destination">Where are you going?</label>
+      <select id="destination"><option value="">Select a destination...</option></select>
+
+      <h2>Shuttles</h2>
+      <div id="shuttle-list"><p class="muted">Loading...</p></div>
+
+      <div id="detail" class="card hidden"></div>
+    </aside>
+  </main>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/static/common.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
